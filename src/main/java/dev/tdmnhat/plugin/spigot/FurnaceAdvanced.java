@@ -1,10 +1,11 @@
-package dev.skyherobrine.plugin.spigot;
+package dev.tdmnhat.plugin.spigot;
 
-import dev.skyherobrine.plugin.spigot.command.MenuCommand;
-import dev.skyherobrine.plugin.spigot.listener.*;
-import dev.skyherobrine.plugin.spigot.listener.inventory.FurnaceMenuListener;
-import dev.skyherobrine.plugin.spigot.listener.inventory.ListFurnaceMenuListener;
-import dev.skyherobrine.plugin.spigot.listener.inventory.OverviewMenuListener;
+import dev.tdmnhat.plugin.spigot.command.MenuCommand;
+import dev.tdmnhat.plugin.spigot.listener.FurnaceListener;
+import dev.tdmnhat.plugin.spigot.listener.PlayerInteractFurnaceListener;
+import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceMenuListener;
+import dev.tdmnhat.plugin.spigot.listener.inventory.ListFurnaceMenuListener;
+import dev.tdmnhat.plugin.spigot.listener.inventory.OverviewMenuListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,12 +29,14 @@ public final class FurnaceAdvanced extends JavaPlugin {
     }
 
     private void registerListeners() {
-        this.getServer().getPluginManager().registerEvents(new FurnaceCookListener(this), this);
-        this.getServer().getPluginManager().registerEvents(new FurnaceSetListener(this), this);
-        this.getServer().getPluginManager().registerEvents(new FurnaceInteractListener(this), this);
+        // Menu Inventory
         this.getServer().getPluginManager().registerEvents(new OverviewMenuListener(this), this);
         this.getServer().getPluginManager().registerEvents(new ListFurnaceMenuListener(this), this);
         this.getServer().getPluginManager().registerEvents(new FurnaceMenuListener(this), this);
+
+        // Action Inventory
+        this.getServer().getPluginManager().registerEvents(new PlayerInteractFurnaceListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new FurnaceListener(this), this);
     }
 
     private void registerCommands() {

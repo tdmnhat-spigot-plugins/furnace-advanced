@@ -1,4 +1,4 @@
-package dev.skyherobrine.plugin.spigot.enums;
+package dev.tdmnhat.plugin.spigot.enums;
 
 public enum FUEL_BURN_TIME {
     WOOD(10), COAL(20), BLOCK_COAL(50), LAVA(100);

@@ -1,6 +1,6 @@
-package dev.skyherobrine.plugin.spigot.inventory;
+package dev.tdmnhat.plugin.spigot.inventory;
 
-import dev.skyherobrine.plugin.spigot.FurnaceAdvanced;
+import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

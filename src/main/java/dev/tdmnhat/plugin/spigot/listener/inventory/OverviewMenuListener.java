@@ -1,8 +1,8 @@
-package dev.skyherobrine.plugin.spigot.listener.inventory;
+package dev.tdmnhat.plugin.spigot.listener.inventory;
 
-import dev.skyherobrine.plugin.spigot.FurnaceAdvanced;
-import dev.skyherobrine.plugin.spigot.inventory.ListFurnaceMenuInventory;
-import dev.skyherobrine.plugin.spigot.inventory.OverviewMenuInventory;
+import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
+import dev.tdmnhat.plugin.spigot.inventory.ListFurnaceMenuInventory;
+import dev.tdmnhat.plugin.spigot.inventory.OverviewMenuInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

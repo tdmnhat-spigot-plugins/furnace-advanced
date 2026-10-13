@@ -1,14 +1,14 @@
-package dev.skyherobrine.plugin.spigot.command;
+package dev.tdmnhat.plugin.spigot.command;
 
-import dev.skyherobrine.plugin.spigot.FurnaceAdvanced;
-import dev.skyherobrine.plugin.spigot.inventory.OverviewMenuInventory;
+import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
+import dev.tdmnhat.plugin.spigot.inventory.ListFurnaceMenuInventory;
+import dev.tdmnhat.plugin.spigot.inventory.OverviewMenuInventory;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
 
 public class MenuCommand implements CommandExecutor {
 
@@ -20,8 +20,7 @@ public class MenuCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(sender instanceof Player) {
-            Player player = (Player) sender;
+        if(sender instanceof Player player) {
             if(args.length == 0) {
                 showListCommands(player);
             } else if(args.length == 1) {
@@ -30,9 +29,19 @@ public class MenuCommand implements CommandExecutor {
                         showListCommands(player);
                         break;
                     }
+                    case "list": {
+                        Inventory inventory = new ListFurnaceMenuInventory(plugin).getInventory();
+                        player.openInventory(inventory);
+                        break;
+                    }
                     case "menu": {
                         Inventory overviewMenuInventory = new OverviewMenuInventory(plugin).getInventory();
                         player.openInventory(overviewMenuInventory);
+                        break;
+                    }
+                    default: {
+                        player.sendMessage(ChatColor.RED + "Invalid command");
+                        break;
                     }
                 }
             }

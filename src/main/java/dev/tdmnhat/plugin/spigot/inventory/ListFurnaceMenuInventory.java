@@ -1,6 +1,6 @@
-package dev.skyherobrine.plugin.spigot.inventory;
+package dev.tdmnhat.plugin.spigot.inventory;
 
-import dev.skyherobrine.plugin.spigot.FurnaceAdvanced;
+import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
@@ -12,7 +12,7 @@ public class ListFurnaceMenuInventory {
 
     public ListFurnaceMenuInventory(FurnaceAdvanced plugin) {
         this.plugin = plugin;
-        this.inventory = Bukkit.createInventory(null, 9, plugin.getConfig().getString("furnace-menu.title"));
+        inventory = Bukkit.createInventory(null, 9, plugin.getConfig().getString("furnace-menu.title"));
         addItem();
     }
 

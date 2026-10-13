@@ -2,10 +2,10 @@ name: furnace_advanced
 description: $description
 version: '${version}'
 
-main: dev.skyherobrine.plugin.spigot.FurnaceAdvanced
+main: dev.tdmnhat.plugin.spigot.FurnaceAdvanced
 api-version: '26.1'
 
-authors: [ skyherobrine ]
+authors: [ tdminhnhat ]
 
 commands:
   fa:
