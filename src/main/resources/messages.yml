@@ -1,0 +1,37 @@
+############################################
+#                                          #
+#             Furnace Advanced             #
+#                                          #
+############################################
+
+# This plugin is created by @tdminhnhat.
+
+# This file is used for configuring the message of this plugin. The message will be appeared on the chat. DON'T DELETE THIS FILE ELSE YOUR SERVER WILL BE CRASHED BY THIS PLUGIN
+# All the configs below for adjusting the message displays during game. You can adjust the color code for yourself if you want. The color code should be started the character '&' else they don't work.
+# You can take a look all the color code in this website: https://minecraftitemids.com/color-codes
+
+# 1. Config the prefix plugin, every the message is notified the start message always contains the first prefix.
+plugin-prefix: "[Furnace Advanced]"
+
+# 2. Config the content each of item on the Overview's menu.
+overview-menu:
+  title: "Furnace Advanced Menu"
+  list-command:
+    display-name: "List Commands"
+    lore:
+      - "/fa help: To see a list commands"
+      - "/fa menu: Open a menu Furnace Advanced"
+  help-upgrade:
+    display-name: "How To Upgrade Furnaces"
+    lore:
+      - "Step 1: You have to place the furnace block on the ground"
+      - "Step 2: SHIFT + LEFT MOUSE on the furnace to open the menu upgrade"
+      - "Step 3: Read instruction and choose upgrade"
+  menu-furnaces:
+    display-name: "Open List Furnaces"
+    lore:
+      - "Open the furnaces menu to view all the furnaces has been placed on the world. You can teleport to the furnace to get there"
+
+# 3. Config the content each of item on the Furnace's menu
+furnace-menu:
+  title: "List Your Furnaces"

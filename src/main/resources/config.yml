@@ -7,30 +7,3 @@
 # This file is used for configuring the plugin. Please make sure that don't put any empty or inconsistent value in this
 # file else the plugin will be not working perfectly, and it maybe causes some errors in your server.
 
-# All the configs below for adjusting the message displays during game. You can adjust the color code for yourself if
-# you want.
-
-# Config the prefix plugin, every the message is notified the start message always contains the first prefix.
-plugin-prefix: "[Furnace Advanced]"
-
-# Config the content each of item on the menu.
-overview-menu:
-  title: "Furnace Advanced Menu"
-  list-command:
-    display-name: "List Commands"
-    lore:
-      - "/fa help: To see a list commands"
-      - "/fa menu: Open a menu Furnace Advanced"
-  help-upgrade:
-    display-name: "How To Upgrade Furnaces"
-    lore:
-      - "Step 1: You have to place the furnace block on the ground"
-      - "Step 2: SHIFT + LEFT MOUSE on the furnace to open the menu upgrade"
-      - "Step 3: Read instruction and choose upgrade"
-  menu-furnaces:
-    display-name: "Open List Furnaces"
-    lore:
-      - "Open the furnaces menu to view all the furnaces has been placed on the world. You can teleport to the furnace to get there"
-
-furnace-menu:
-  title: "List Your Furnaces"

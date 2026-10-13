@@ -7,25 +7,30 @@ import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceMenuListener;
 import dev.tdmnhat.plugin.spigot.listener.inventory.ListFurnaceMenuListener;
 import dev.tdmnhat.plugin.spigot.listener.inventory.OverviewMenuListener;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 public final class FurnaceAdvanced extends JavaPlugin {
 
     @Override
     public void onEnable() {
         // Load configuration file
-        this.getConfig().options().copyDefaults(true);
-        this.saveDefaultConfig();
+        registerConfig();
 
         // Plugin startup logic
         registerListeners();
         registerCommands();
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
+    private void registerConfig() {
+        // config.yml
+        this.getConfig().options().copyDefaults(true);
+        this.saveDefaultConfig();
+
+        saveResource("messages.yml", false);
     }
 
     private void registerListeners() {
