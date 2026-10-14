@@ -10,10 +10,16 @@
 # All the configs below for adjusting the message displays during game. You can adjust the color code for yourself if you want. The color code should be started the character '&' else they don't work.
 # You can take a look all the color code in this website: https://minecraftitemids.com/color-codes
 
-# 1. Config the prefix plugin, every the message is notified the start message always contains the first prefix.
+# Config the prefix plugin, every the message is notified the start message always contains the first prefix.
 plugin-prefix: "[Furnace Advanced]"
 
-# 2. Config the content each of item on the Overview's menu.
+# When the player do an action like executing the command, upgrade, place/break furnace that without permissions. Send them a message to let them know.
+send-message-not-permissions: "You don't have permission to do this action. Please contact the administrator to get permitted"
+
+# When the player has placed the furnace block, send a message that they can upgrade it if they want.
+send-message-furnace-place: "You have placed the furnace block. Please hold 'sneaking' button and LEFT CLICK to open the furnace menu"
+
+# Config the content each of item on the Overview's menu.
 overview-menu:
   title: "Furnace Advanced Menu"
   list-command:
@@ -32,6 +38,6 @@ overview-menu:
     lore:
       - "Open the furnaces menu to view all the furnaces has been placed on the world. You can teleport to the furnace to get there"
 
-# 3. Config the content each of item on the Furnace's menu
+# Config the content each of item on the Furnace's menu
 furnace-menu:
   title: "List Your Furnaces"

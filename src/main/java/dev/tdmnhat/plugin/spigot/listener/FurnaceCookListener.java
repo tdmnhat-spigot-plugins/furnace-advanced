@@ -9,11 +9,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 
-public class FurnaceListener implements Listener {
+public class FurnaceCookListener implements Listener {
 
     private FurnaceAdvanced plugin;
 
-    public FurnaceListener(FurnaceAdvanced plugin) {
+    public FurnaceCookListener(FurnaceAdvanced plugin) {
         this.plugin = plugin;
     }
 

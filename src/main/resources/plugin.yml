@@ -8,14 +8,12 @@ api-version: '26.1'
 authors: [ tdminhnhat ]
 
 commands:
-  fa:
-    permission: furnaceadvanced.command.fa
+  furnaceadvanced:
+    permission: furnaceadvanced.command.help
     description: A command to show all the commands in this plugin
     usage: /<command>
 
 permissions:
-  furnaceadvanced.command.fa:
+  furnaceadvanced.command.help:
     description: A permission to allow the player can view all the commands in this plugin
     default: op
-
-

@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -17,6 +18,14 @@ public class PlayerInteractFurnaceListener implements Listener {
 
     public PlayerInteractFurnaceListener(FurnaceAdvanced plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Material material = event.getBlock().getType();
+        if(material.toString().equalsIgnoreCase("FURNACE") || material.toString().equalsIgnoreCase("BLAST_FURNACE")) {
+
+        }
     }
 
     @EventHandler

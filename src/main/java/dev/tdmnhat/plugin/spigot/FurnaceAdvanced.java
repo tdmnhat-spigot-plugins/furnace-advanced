@@ -1,17 +1,16 @@
 package dev.tdmnhat.plugin.spigot;
 
 import dev.tdmnhat.plugin.spigot.command.MenuCommand;
-import dev.tdmnhat.plugin.spigot.listener.FurnaceListener;
+import dev.tdmnhat.plugin.spigot.file.DataFile;
+import dev.tdmnhat.plugin.spigot.file.MessageFile;
+import dev.tdmnhat.plugin.spigot.listener.FurnaceCookListener;
 import dev.tdmnhat.plugin.spigot.listener.PlayerInteractFurnaceListener;
 import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceMenuListener;
 import dev.tdmnhat.plugin.spigot.listener.inventory.ListFurnaceMenuListener;
 import dev.tdmnhat.plugin.spigot.listener.inventory.OverviewMenuListener;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 public final class FurnaceAdvanced extends JavaPlugin {
 
@@ -20,8 +19,10 @@ public final class FurnaceAdvanced extends JavaPlugin {
         // Load configuration file
         registerConfig();
 
-        // Plugin startup logic
+        // Load listeners
         registerListeners();
+
+        // Load commands
         registerCommands();
     }
 
@@ -30,7 +31,14 @@ public final class FurnaceAdvanced extends JavaPlugin {
         this.getConfig().options().copyDefaults(true);
         this.saveDefaultConfig();
 
-        saveResource("messages.yml", false);
+        // Custom Config File
+        MessageFile.setup();
+        MessageFile.getConfiguration().options().copyDefaults(true);
+        MessageFile.save();
+
+        DataFile.setup();
+        DataFile.getConfiguration().options().copyDefaults(true);
+        DataFile.save();
     }
 
     private void registerListeners() {
@@ -41,11 +49,11 @@ public final class FurnaceAdvanced extends JavaPlugin {
 
         // Action Inventory
         this.getServer().getPluginManager().registerEvents(new PlayerInteractFurnaceListener(this), this);
-        this.getServer().getPluginManager().registerEvents(new FurnaceListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new FurnaceCookListener(this), this);
     }
 
     private void registerCommands() {
-        this.getCommand("fa").setExecutor(new MenuCommand(this));
+        this.getCommand("furnaceadvanced").setExecutor(new MenuCommand(this));
     }
 
     public static Plugin getPlugin() {
