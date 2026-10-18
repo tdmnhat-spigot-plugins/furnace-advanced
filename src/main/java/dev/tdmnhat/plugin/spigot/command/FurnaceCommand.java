@@ -1,8 +1,6 @@
 package dev.tdmnhat.plugin.spigot.command;
 
 import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
-import dev.tdmnhat.plugin.spigot.inventory.ListFurnaceMenuInventory;
-import dev.tdmnhat.plugin.spigot.inventory.OverviewMenuInventory;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,11 +8,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-public class MenuCommand implements CommandExecutor {
+public class FurnaceCommand implements CommandExecutor {
 
     private FurnaceAdvanced plugin;
 
-    public MenuCommand(FurnaceAdvanced plugin) {
+    public FurnaceCommand(FurnaceAdvanced plugin) {
         this.plugin = plugin;
     }
 
@@ -27,16 +25,6 @@ public class MenuCommand implements CommandExecutor {
                 switch(args[0]) {
                     case "help": {
                         showListCommands(player);
-                        break;
-                    }
-                    case "list": {
-                        Inventory inventory = new ListFurnaceMenuInventory(plugin).getInventory();
-                        player.openInventory(inventory);
-                        break;
-                    }
-                    case "menu": {
-                        Inventory overviewMenuInventory = new OverviewMenuInventory(plugin).getInventory();
-                        player.openInventory(overviewMenuInventory);
                         break;
                     }
                     default: {
