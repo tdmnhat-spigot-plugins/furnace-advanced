@@ -1,0 +1,77 @@
+name: Publish New Version
+on:
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  checkout-project:
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-java@v6.1.0
+        with:
+          distribution: temurin
+          java-version: '8'
+          cache: maven
+
+      - name: Build Project With Maven
+        run: mvn -B clean package
+
+      - name: Get Version From File Jar
+        id: get-version
+        run: |
+          JAR=$(ls target/*.jar | grep -v -E '(sources|javadoc|original)' | head -n 1)
+          echo "JAR_PATH=$JAR" >> "$GITHUB_ENV"
+          # Read pom.properties embedded in the jar (Maven puts it there)
+          VERSION=$(unzip -p "$JAR" 'META-INF/maven/*/pom.properties' | grep '^version=' | cut -d= -f2)
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Set Version in Environment Variable
+        run: |
+          echo "Building version: $VERSION"
+          echo "RELEASE_TAG=v$VERSION" >> "$GITHUB_ENV"
+
+      - name: Upload Jar
+        with:
+          name: app-jar
+          path: target/*.jar
+
+  release-version:
+    needs: checkout-project
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    runs-on: ubuntu-22.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VERSION: ${{ needs.checkout-project.outputs.version }}
+    steps:
+      - name: Download Jar
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+          path: dist
+
+      - name: Create Tag With Version In Variable Environment
+        run: |
+          echo "RELEASE_TAG=v$VERSION" >> "$GITHUB_ENV"
+          gh api "repos/${{ github.repository }}/git/refs" \
+            -f ref="refs/tags/v$VERSION" \
+            -f sha="${{ github.sha }}"
+
+      - name: Release Version
+        run: |
+          gh release create "$RELEASE_TAG" dist/*.jar \
+            --repo "${{ github.repository }}" \
+            --title "$RELEASE_TAG" \
+            --generate-notes
