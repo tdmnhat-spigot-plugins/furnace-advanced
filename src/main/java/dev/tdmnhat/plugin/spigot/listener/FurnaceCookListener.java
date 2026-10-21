@@ -1,9 +1,9 @@
 package dev.tdmnhat.plugin.spigot.listener;
 
-import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
 import dev.tdmnhat.plugin.spigot.event.FurnaceSmeltDoneEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Furnace;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -11,10 +11,10 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
 
 public class FurnaceCookListener implements Listener {
 
-    private FurnaceAdvanced plugin;
+    private FileConfiguration configuration;
 
-    public FurnaceCookListener(FurnaceAdvanced plugin) {
-        this.plugin = plugin;
+    public FurnaceCookListener() {
+        configuration = Bukkit.getPluginManager().getPlugin("FurnaceAdvanced").getConfig();
     }
 
     @EventHandler

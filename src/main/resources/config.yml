@@ -22,63 +22,65 @@ furnace-place: "You have placed the furnace block. Please hold 'sneaking' button
 # When the level generate result which the min and max amount result both different in config.yml. The message replace the Placeholder "%furnaceadvanced_furnace_item_generate%" in the furnace item
 range-generate-amount-result: "range %furnaceadvanced_furnace_item_generate_min% to %furnaceadvanced_furnace_item_generate_max% items"
 
-# Config the content each of item on the Overview's menu.
-overview-menu:
-  title: "Furnace Advanced Menu"
-  list-command:
-    display-name: "List Commands"
-    lore:
-      - "/fa help: To see a list commands"
-      - "/fa menu: Open a menu Furnace Advanced"
-  help-upgrade:
-    display-name: "How To Upgrade Furnaces"
-    lore:
-      - "Step 1: You have to place the furnace block on the ground"
-      - "Step 2: SHIFT + LEFT MOUSE on the furnace to open the menu upgrade"
-      - "Step 3: Read instruction and choose upgrade"
-  menu-furnaces:
-    display-name: "Open List Furnaces"
-    lore:
-      - "Open the furnaces menu to view all the furnaces has been placed on the world. You can teleport to the furnace to get there"
+###################################
+#                                 #
+#       Config Furnace Menu       #
+#                                 #
+###################################
 
-# Config the content each of item on the Furnace's menu
-furnace-menu:
-  title: "List Your Furnaces"
+
+####################################
+#                                  #
+#       Config Furnace Level       #
+#                                  #
+####################################
 
 # Config the amount of the result for cooking ingredient. Here you example:
 # generate-result-level:
 #   1: --> this describes the level of the generate result. This row of this level "MUST BE A POSITIVE NUMBER"
+#     cost: 100  --> this describes the cost of money for this upgrading. In the first level, you don't need to specify the cost.
 #     min: 1  --> this describes the minimum amount of the result This value "MUST BE A POSITIVE NUMBER AND SMALLER THAN MAX"
 #     max: 4  --> this describes the maximum amount of the result. If you set the value equal the min, it means the amount of the result will be generated exactly that value after cooking done. This value "MUST BE A POSITIVE NUMBER AND GREATER THAN MIN"
+#     commands:
+#       - "give %player_name% minecraft:diamond_ore 10"   --> this describes the command that will be executed when the player want to upgrade. You can customize the command like taking money, points, or something else like conditionals. You can execute multiple command if you want.
 generate-result-level:
   1:
     min: 1
     max: 1
   2:
+    cost: 200
     min: 1
     max: 2
   3:
+    cost: 400
     min: 1
     max: 4
   4:
+    cost: 1000
     min: 2
     max: 6
   5:
+    cost: 2000
     min: 3
     max: 8
 
 # Config the furnace level. Here your example:
 # level:
 #   1: --> this describes the level the cooking time. This row of this level "MUST BE A POSITIVE NUMBER"
+#     cost: 10 --> this describes the level of the furnace level. This row of this level "MUST BE A POSITIVE NUMBER"
 #     cookTime: 10  --> this describes that the time which cooks the ingredient is 10 seconds. This value "MUST BE A POSITIVE NUMBER"
 cook-level:
   1:
     cookTime: 10
   2:
+    cost: 150
     cookTime: 9
   3:
+    cost: 300
     cookTime: 7
   4:
+    cost: 500
     cookTime: 5
   5:
+    cost: 1000
     cookTime: 3

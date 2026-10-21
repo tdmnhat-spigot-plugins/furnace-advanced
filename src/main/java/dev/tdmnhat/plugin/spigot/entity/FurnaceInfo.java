@@ -10,21 +10,34 @@ public class FurnaceInfo {
 
     private String id;
     private String author;
-    private int cookLevel;
+    // The old version doesn't have BLAST_FURNACE
+    private String type;
+    private int cookTimeLevel;
     private int generateAmountLevel;
-    private Location location;
-    private List<ArmorStand> armorStands;
+    private Location placeLocation;
+    private List<ArmorStand> holograms;
 
     public FurnaceInfo() {
     }
 
-    public FurnaceInfo(String id, String author, int cookLevel, int generateAmountLevel, Location location) {
+    public FurnaceInfo(String id, String author, String type, int cookTimeLevel, int generateAmountLevel, Location placeLocation) {
         this.id = id;
         this.author = author;
-        this.cookLevel = cookLevel;
+        this.type = type;
+        this.cookTimeLevel = cookTimeLevel;
         this.generateAmountLevel = generateAmountLevel;
-        this.location = location;
-        this.armorStands = new ArrayList<>();
+        this.placeLocation = placeLocation;
+        this.holograms = new ArrayList<>();
+    }
+
+    public FurnaceInfo(String id, String author, String type, int cookTimeLevel, int generateAmountLevel, Location placeLocation, List<ArmorStand> holograms) {
+        this.id = id;
+        this.author = author;
+        this.type = type;
+        this.cookTimeLevel = cookTimeLevel;
+        this.generateAmountLevel = generateAmountLevel;
+        this.placeLocation = placeLocation;
+        this.holograms = holograms;
     }
 
     public String getId() {
@@ -43,12 +56,20 @@ public class FurnaceInfo {
         this.author = author;
     }
 
-    public int getCookLevel() {
-        return cookLevel;
+    public String getType() {
+        return type;
     }
 
-    public void setCookLevel(int cookLevel) {
-        this.cookLevel = cookLevel;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getCookTimeLevel() {
+        return cookTimeLevel;
+    }
+
+    public void setCookTimeLevel(int cookTimeLevel) {
+        this.cookTimeLevel = cookTimeLevel;
     }
 
     public int getGenerateAmountLevel() {
@@ -59,19 +80,19 @@ public class FurnaceInfo {
         this.generateAmountLevel = generateAmountLevel;
     }
 
-    public Location getLocation() {
-        return location;
+    public Location getPlaceLocation() {
+        return placeLocation;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setPlaceLocation(Location placeLocation) {
+        this.placeLocation = placeLocation;
     }
 
-    public List<ArmorStand> getArmorStands() {
-        return armorStands;
+    public List<ArmorStand> getHolograms() {
+        return holograms;
     }
 
-    public void setArmorStands(List<ArmorStand> armorStands) {
-        this.armorStands = armorStands;
+    public void setHolograms(List<ArmorStand> holograms) {
+        this.holograms = holograms;
     }
 }
