@@ -21,6 +21,7 @@ public class FurnaceMenuListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        // Check the menu inventory, some methods don't support for some versions
         if (ServerVersion.getMajor() >= 26 || (ServerVersion.getMajor() == 1 && ServerVersion.getMinor() >= 14)) {
             if (event.getView().getTitle().equalsIgnoreCase(FurnaceMenuInventory.title) && event.getWhoClicked() instanceof Player player) {
                 if(event.getCurrentItem() == null) return;

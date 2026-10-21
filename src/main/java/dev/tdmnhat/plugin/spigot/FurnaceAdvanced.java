@@ -6,6 +6,7 @@ import dev.tdmnhat.plugin.spigot.entity.FurnaceInfo;
 import dev.tdmnhat.plugin.spigot.listener.FurnaceCookListener;
 import dev.tdmnhat.plugin.spigot.listener.FurnaceInteractedListener;
 import dev.tdmnhat.plugin.spigot.listener.FurnacePlaceBreakListener;
+import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceInventoryListener;
 import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceMenuListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -40,6 +41,7 @@ public final class FurnaceAdvanced extends JavaPlugin {
 
     private void registerListeners() {
         // Menu Inventory
+        this.getServer().getPluginManager().registerEvents(new FurnaceInventoryListener(), this);
         this.getServer().getPluginManager().registerEvents(new FurnaceMenuListener(), this);
 
         // Action Inventory

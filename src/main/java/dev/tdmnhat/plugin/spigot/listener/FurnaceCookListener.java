@@ -36,22 +36,7 @@ public class FurnaceCookListener implements Listener {
 
         FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(item -> item.getPlaceLocation().equals(furnace.getLocation())).findFirst().orElse(null);
         if(furnaceInfo != null) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, (task) -> {
-                System.out.println("Run the async task");
-                ArmorStand armorStand = furnaceInfo.getHolograms().get(3);
-                ItemStack getSmeltingItem = furnace.getInventory().getSmelting();
-                ItemStack getResultItem = furnace.getInventory().getResult();
-
-                if(getSmeltingItem == null || getResultItem == null) {
-                    task.cancel();
-                } else if(getSmeltingItem.getAmount() == 0) {
-                    task.cancel();
-                }
-
-                int smeltingItemAmount = getSmeltingItem == null ? 0 : getSmeltingItem.getAmount();
-                int resultItemAmount = getResultItem == null ? 0 : getResultItem.getAmount();
-                armorStand.setCustomName(smeltingItemAmount + " | " + resultItemAmount);
-            }, 0L, 50L);
+            updateHologramFurnace(furnace, furnaceInfo);
         }
     }
 
@@ -66,5 +51,20 @@ public class FurnaceCookListener implements Listener {
 
         short cookTime = 100;
         furnace.setCookTime(cookTime);
+
+        FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(item -> item.getPlaceLocation().equals(furnace.getLocation())).findFirst().orElse(null);
+        if(furnaceInfo != null) {
+            updateHologramFurnace(furnace, furnaceInfo);
+        }
+    }
+
+    private void updateHologramFurnace(Furnace furnace, FurnaceInfo furnaceInfo) {
+        ArmorStand armorStand = furnaceInfo.getHolograms().get(3);
+        ItemStack getSmeltingItem = furnace.getInventory().getSmelting();
+        ItemStack getResultItem = furnace.getInventory().getResult();
+
+        int smeltingItemAmount = getSmeltingItem == null ? 0 : getSmeltingItem.getAmount();
+        int resultItemAmount = getResultItem == null ? 0 : getResultItem.getAmount();
+        armorStand.setCustomName(smeltingItemAmount + " ➜ " + resultItemAmount);
     }
 }
