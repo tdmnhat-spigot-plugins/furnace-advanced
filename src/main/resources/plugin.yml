@@ -3,7 +3,7 @@ description: $description
 version: '${version}'
 
 main: dev.tdmnhat.plugin.spigot.FurnaceAdvanced
-api-version: '26.1'
+api-version: '1.13'
 
 authors: [ tdminhnhat ]
 

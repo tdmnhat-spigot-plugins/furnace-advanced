@@ -21,7 +21,7 @@ public class FurnaceMenuListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (ServerVersion.getMinor() >= 26 || (ServerVersion.getMinor() == 1 && ServerVersion.getMajor() >= 14)) {
+        if (ServerVersion.getMajor() >= 26 || (ServerVersion.getMajor() == 1 && ServerVersion.getMinor() >= 14)) {
             if (event.getView().getTitle().equalsIgnoreCase(FurnaceMenuInventory.title) && event.getWhoClicked() instanceof Player player) {
                 if(event.getCurrentItem() == null) return;
                 doCheckItemClicked(player, event.getCurrentItem());

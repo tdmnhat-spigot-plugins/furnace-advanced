@@ -140,7 +140,7 @@ public class FurnacePlaceBreakListener implements Listener {
     }
 
     private ArmorStand generateHologram(String name, Block target, double addHeight) {
-        ArmorStand armorStand = (ArmorStand) target.getWorld().spawnEntity(target.getLocation().add(0.5, addHeight, 0.5).subtract(0, 0.5, 0), EntityType.ARMOR_STAND);
+        ArmorStand armorStand = (ArmorStand) target.getWorld().spawnEntity(target.getLocation().add(0.5, addHeight, 0.5).subtract(0, 0.3, 0), EntityType.ARMOR_STAND);
         armorStand.setVisible(false);
         armorStand.setCustomName(name);
         armorStand.setCustomNameVisible(true);
