@@ -34,11 +34,10 @@ public class FurnacePlaceBreakListener implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        Block blockAgainst = event.getBlockAgainst();
-        if (checkIfTheBlockIsFurnace(blockAgainst.getType())) {
-            event.setBuild(false);
+
+        if(checkIfTheBlockIsFurnace(event.getBlockAgainst().getType())) {
+            event.getPlayer().sendMessage("Interrupted event");
             event.setCancelled(true);
-            return;
         }
 
         // Handle
@@ -60,7 +59,7 @@ public class FurnacePlaceBreakListener implements Listener {
                         List.of(generateHologram(player.getName(), blockPlaced.getBlock(), 1),
                                 generateHologram("Cook Time Level: 1", blockPlaced.getBlock(), 0.75),
                                 generateHologram("Generate Level: 1", blockPlaced.getBlock(), 0.5),
-                                generateHologram("0 | 0", blockPlaced.getBlock(), 0.25)
+                                generateHologram("0 ➜ 0", blockPlaced.getBlock(), 0.25)
                         )
                 );
             } else {
@@ -73,7 +72,7 @@ public class FurnacePlaceBreakListener implements Listener {
                         generateHologram(player.getName(), blockPlaced.getBlock(), 1),
                         generateHologram("Cook Tim Level: " + cookTimeLevel, blockPlaced.getBlock(), 0.75),
                         generateHologram("Generate Level: " + generateAmountLevel, blockPlaced.getBlock(), 0.5),
-                        generateHologram("0 | 0", blockPlaced.getBlock(), 0.25)
+                        generateHologram("0 ➜ 0", blockPlaced.getBlock(), 0.25)
                 ));
             }
             FurnaceManagement.getInstance().getFurnaceInfos().add(furnaceInfo);

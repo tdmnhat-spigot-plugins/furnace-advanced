@@ -4,10 +4,9 @@ import dev.tdmnhat.plugin.spigot.cache.FurnaceManagement;
 import dev.tdmnhat.plugin.spigot.command.FurnaceCommand;
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInfo;
 import dev.tdmnhat.plugin.spigot.listener.FurnaceCookListener;
-import dev.tdmnhat.plugin.spigot.listener.FurnaceInteractedListener;
 import dev.tdmnhat.plugin.spigot.listener.FurnacePlaceBreakListener;
-import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceInventoryListener;
-import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceMenuListener;
+import dev.tdmnhat.plugin.spigot.listener.FurnaceInventoryListener;
+import dev.tdmnhat.plugin.spigot.listener.menu.FurnaceMenuListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -45,7 +44,6 @@ public final class FurnaceAdvanced extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new FurnaceMenuListener(), this);
 
         // Action Inventory
-        this.getServer().getPluginManager().registerEvents(new FurnaceInteractedListener(), this);
         this.getServer().getPluginManager().registerEvents(new FurnacePlaceBreakListener(), this);
         this.getServer().getPluginManager().registerEvents(new FurnaceCookListener(), this);
     }
