@@ -1,13 +1,14 @@
 package dev.tdmnhat.plugin.spigot;
 
 import dev.tdmnhat.plugin.spigot.cache.FurnaceManagement;
-import dev.tdmnhat.plugin.spigot.command.FurnaceCommand;
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInfo;
 import dev.tdmnhat.plugin.spigot.listener.FurnaceCookListener;
 import dev.tdmnhat.plugin.spigot.listener.FurnacePlaceBreakListener;
 import dev.tdmnhat.plugin.spigot.listener.FurnaceInventoryListener;
+import dev.tdmnhat.plugin.spigot.listener.PlayerJoinQuitListener;
 import dev.tdmnhat.plugin.spigot.listener.menu.FurnaceMenuListener;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +30,11 @@ public final class FurnaceAdvanced extends JavaPlugin {
     @Override
     public void onDisable() {
         // Removing all the holograms
-        FurnaceManagement.getInstance().getFurnaceInfos().stream().map(FurnaceInfo::getHolograms).forEach(armorStands -> armorStands.forEach(Entity::remove));
+        FurnaceManagement.getInstance().
+                getFurnaces()
+                .values()
+                .stream()
+                .forEach(furnaces -> furnaces.parallelStream().map(FurnaceInfo::getHolograms).forEach(item -> item.forEach(Entity::remove)));
     }
 
     private void registerConfig() {
@@ -44,12 +49,13 @@ public final class FurnaceAdvanced extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new FurnaceMenuListener(), this);
 
         // Action Inventory
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinQuitListener(), this);
         this.getServer().getPluginManager().registerEvents(new FurnacePlaceBreakListener(), this);
         this.getServer().getPluginManager().registerEvents(new FurnaceCookListener(), this);
     }
 
     private void registerCommands() {
-        this.getCommand("furnaceadvanced").setExecutor(new FurnaceCommand(this));
+
     }
 
     public static Plugin getPlugin() {

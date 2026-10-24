@@ -7,13 +7,20 @@ api-version: '1.13'
 
 authors: [ tdminhnhat ]
 
-commands:
-  furnaceadvanced:
-    permission: furnaceadvanced.command.help
-    description: A command to show all the commands in this plugin
-    usage: /<command>
-
 permissions:
-  furnaceadvanced.command.help:
-    description: A permission to allow the player can view all the commands in this plugin
-    default: op
+  furnaceadvanced.admin.*:
+    description: Access all the admin actions. This includes all the permission from player
+    default: not op
+    children:
+      furnaceadvanced.player.*: true
+
+  furnaceadvanced.player.*:
+    description: Access all the player actions. But the admin actions are not permitted
+    default: not op
+    children:
+      furnaceadvanced.player.breakfurnace-other: true
+
+  furnaceadvanced.player.breakfurnace-other:
+    description: Allow the player can break the other's furnace. The information from that
+    default: not op
+

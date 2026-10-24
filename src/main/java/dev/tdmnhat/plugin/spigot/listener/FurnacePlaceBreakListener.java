@@ -75,7 +75,8 @@ public class FurnacePlaceBreakListener implements Listener {
                         generateHologram("0 ➜ 0", blockPlaced.getBlock(), 0.25)
                 ));
             }
-            FurnaceManagement.getInstance().getFurnaceInfos().add(furnaceInfo);
+            FurnaceManagement.getInstance().addFurnace(player, furnaceInfo);
+            player.sendMessage("[Size] " + FurnaceManagement.getInstance().getListFurnaces(player).size() + " Furnaces");
         }
     }
 
@@ -98,7 +99,7 @@ public class FurnacePlaceBreakListener implements Listener {
         Material material = event.getBlock().getType();
         if (checkIfTheBlockIsFurnace(material)) {
             Block block = event.getBlock();
-            FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(furnace -> furnace.getPlaceLocation().equals(block.getLocation())).findFirst().orElse(null);
+            FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getListFurnaces(event.getPlayer()).stream().filter(furnace -> furnace.getPlaceLocation().equals(block.getLocation())).findFirst().orElse(null);
 
             if (furnaceInfo != null) {
                 ItemStack itemStack = new ItemStack(block.getType());
@@ -107,7 +108,6 @@ public class FurnacePlaceBreakListener implements Listener {
                 itemMeta.setDisplayName("[Furnace Advanced] Furnace Technology");
                 itemMeta.addEnchant(Enchantment.SILK_TOUCH, 1, false);
                 itemMeta.setLore(List.of(
-                        "ID: " + furnaceInfo.getId(),
                         "Author: " + furnaceInfo.getAuthor(),
                         "Cook Time Level: " + furnaceInfo.getCookTimeLevel(),
                         "Generate Amount Level: " + furnaceInfo.getGenerateAmountLevel()
@@ -119,7 +119,8 @@ public class FurnacePlaceBreakListener implements Listener {
 
                 // Remove hologram & furnace management
                 furnaceInfo.getHolograms().forEach(Entity::remove);
-                FurnaceManagement.getInstance().getFurnaceInfos().remove(furnaceInfo);
+                FurnaceManagement.getInstance().getListFurnaces(event.getPlayer()).remove(furnaceInfo);
+                event.getPlayer().sendMessage("[Size] " + FurnaceManagement.getInstance().getListFurnaces(event.getPlayer()).size() + " Furnaces");
 
                 // Disable drop items. The version from 1.12+ has the method setDropItems()
                 if (ServerVersion.getMajor() >= 26 || (ServerVersion.getMinor() >= 12)) {
@@ -148,8 +149,6 @@ public class FurnacePlaceBreakListener implements Listener {
     }
 
     private FurnaceInfo generateFurnaceInfo(String id, String author, String type, int cookTimeLevel, int generateAmountLevel, Location placedLocation, List<ArmorStand> holograms) {
-        return new FurnaceInfo(
-                id, author, type, cookTimeLevel, generateAmountLevel, placedLocation, holograms
-        );
+        return new FurnaceInfo(author, type, cookTimeLevel, generateAmountLevel, placedLocation, holograms);
     }
 }

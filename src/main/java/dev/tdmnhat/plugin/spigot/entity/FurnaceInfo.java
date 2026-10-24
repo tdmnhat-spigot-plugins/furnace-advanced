@@ -1,14 +1,16 @@
 package dev.tdmnhat.plugin.spigot.entity;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.ArmorStand;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FurnaceInfo {
 
-    private String id;
     private String author;
     // The old version doesn't have BLAST_FURNACE
     private String type;
@@ -20,8 +22,7 @@ public class FurnaceInfo {
     public FurnaceInfo() {
     }
 
-    public FurnaceInfo(String id, String author, String type, int cookTimeLevel, int generateAmountLevel, Location placeLocation) {
-        this.id = id;
+    public FurnaceInfo(String author, String type, int cookTimeLevel, int generateAmountLevel, Location placeLocation) {
         this.author = author;
         this.type = type;
         this.cookTimeLevel = cookTimeLevel;
@@ -30,22 +31,13 @@ public class FurnaceInfo {
         this.holograms = new ArrayList<>();
     }
 
-    public FurnaceInfo(String id, String author, String type, int cookTimeLevel, int generateAmountLevel, Location placeLocation, List<ArmorStand> holograms) {
-        this.id = id;
+    public FurnaceInfo(String author, String type, int cookTimeLevel, int generateAmountLevel, Location placeLocation, List<ArmorStand> holograms) {
         this.author = author;
         this.type = type;
         this.cookTimeLevel = cookTimeLevel;
         this.generateAmountLevel = generateAmountLevel;
         this.placeLocation = placeLocation;
         this.holograms = holograms;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getAuthor() {
@@ -94,5 +86,15 @@ public class FurnaceInfo {
 
     public void setHolograms(List<ArmorStand> holograms) {
         this.holograms = holograms;
+    }
+
+    public Map<String, Object> toMap() {
+        return new HashMap<>(){{
+            put("author", author);
+            put("type", type);
+            put("cookTimeLevel", cookTimeLevel);
+            put("generateAmountLevel", generateAmountLevel);
+            put("placeLocation", placeLocation);
+        }};
     }
 }

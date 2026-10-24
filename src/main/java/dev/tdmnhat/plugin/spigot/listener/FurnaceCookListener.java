@@ -9,10 +9,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Furnace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -22,6 +25,7 @@ public class FurnaceCookListener implements Listener {
 
     private FileConfiguration configuration;
     private FurnaceAdvanced plugin;
+    private Player player;
 
     public FurnaceCookListener() {
         plugin = (FurnaceAdvanced) Bukkit.getPluginManager().getPlugin("FurnaceAdvanced");
@@ -34,7 +38,9 @@ public class FurnaceCookListener implements Listener {
         Furnace furnace = (Furnace) event.getBlock().getState();
         furnace.setCookTime(cookTime);
 
-        FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(item -> item.getPlaceLocation().equals(furnace.getLocation())).findFirst().orElse(null);
+        FurnaceInfo furnaceInfo = FurnaceManagement.getInstance()
+                .getListFurnaces(player)
+                .stream().filter(item -> item.getPlaceLocation().equals(furnace.getLocation())).findFirst().orElse(null);
         if(furnaceInfo != null) {
             updateHologramFurnace(furnace, furnaceInfo);
         }
@@ -52,9 +58,16 @@ public class FurnaceCookListener implements Listener {
         short cookTime = 100;
         furnace.setCookTime(cookTime);
 
-        FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(item -> item.getPlaceLocation().equals(furnace.getLocation())).findFirst().orElse(null);
+        FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getListFurnaces(player).stream().filter(item -> item.getPlaceLocation().equals(furnace.getLocation())).findFirst().orElse(null);
         if(furnaceInfo != null) {
             updateHologramFurnace(furnace, furnaceInfo);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        if(event.getInventory() instanceof FurnaceInventory && event.getPlayer() instanceof  Player player) {
+            this.player = player;
         }
     }
 
