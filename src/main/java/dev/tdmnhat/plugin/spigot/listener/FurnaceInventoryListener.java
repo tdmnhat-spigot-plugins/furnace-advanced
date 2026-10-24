@@ -20,13 +20,13 @@ public class FurnaceInventoryListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         InventoryType inventoryType = event.getInventory().getType();
-        if(inventoryType.equals(InventoryType.FURNACE)) {
+        if(inventoryType.equals(InventoryType.FURNACE) && event.getPlayer() instanceof Player player) {
             FurnaceInventory furnaceInventory = (FurnaceInventory) event.getInventory();
             // Get furnace location
             BlockState getFurnaceState = (BlockState) event.getInventory().getHolder();
             if (getFurnaceState == null) return;
 
-            FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(item -> item.getPlaceLocation().equals(getFurnaceState.getLocation())).findFirst().orElse(null);
+            FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getListFurnaces(player).stream().filter(item -> item.getPlaceLocation().equals(getFurnaceState.getLocation())).findFirst().orElse(null);
 
             if(furnaceInfo != null) {
                 ArmorStand armorStand = furnaceInfo.getHolograms().get(3);
@@ -49,7 +49,7 @@ public class FurnaceInventoryListener implements Listener {
                 BlockState blockState = (BlockState) event.getInventory().getHolder();
                 if (blockState == null) return;
 
-                FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(furnace -> furnace.getPlaceLocation().equals(blockState.getLocation())).findFirst().orElse(null);
+                FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getListFurnaces(player).stream().filter(furnace -> furnace.getPlaceLocation().equals(blockState.getLocation())).findFirst().orElse(null);
                 if (furnaceInfo != null) {
                     FurnaceMenuInventory inventory = new FurnaceMenuInventory(furnaceInfo.getCookTimeLevel(), furnaceInfo.getGenerateAmountLevel(), (Furnace) blockState);
                     player.openInventory(inventory.getInventory());
