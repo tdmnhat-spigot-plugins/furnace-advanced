@@ -5,7 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class FurnaceSmeltDoneEvent extends Event {
-
     private static final HandlerList handlerList = new HandlerList();
     private Furnace furnace;
 
@@ -18,11 +17,11 @@ public class FurnaceSmeltDoneEvent extends Event {
         return handlerList;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlerList;
-    }
-
     public Furnace getFurnace() {
         return furnace;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
     }
 }
