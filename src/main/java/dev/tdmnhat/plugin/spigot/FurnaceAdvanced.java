@@ -1,26 +1,27 @@
 package dev.tdmnhat.plugin.spigot;
 
+import dev.tdmnhat.plugin.spigot.async.FileAsyncAction;
 import dev.tdmnhat.plugin.spigot.cache.FurnaceManagement;
+import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
 import dev.tdmnhat.plugin.spigot.listener.FurnaceCookListener;
 import dev.tdmnhat.plugin.spigot.listener.FurnaceInventoryListener;
 import dev.tdmnhat.plugin.spigot.listener.FurnacePlaceBreakListener;
 import dev.tdmnhat.plugin.spigot.listener.InventoryMenuItemListener;
 import dev.tdmnhat.plugin.spigot.setup.VaultSetup;
+import dev.tdmnhat.plugin.spigot.storage.FurnaceStorage;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public final class FurnaceAdvanced extends JavaPlugin {
 
-    private static Economy economy = null;
-    private static Permission permissions = null;
-    private static Chat chat = null;
-
     private FurnaceManagement furnaceManagement;
+    private FurnaceStorage furnaceStorage;
 
     @Override
     public void onLoad() {
@@ -45,13 +46,27 @@ public final class FurnaceAdvanced extends JavaPlugin {
 
         // Set up the pre-plugin
         setUpPrePlugin();
+
+        // Do any other actions
+        furnaceStorage = new FurnaceStorage(this);
+        for (FurnaceInformation furnaceInformation : furnaceStorage.load()) {
+            furnaceManagement.addFurnaceInformation(furnaceInformation);
+        }
+
+        FileAsyncAction.startAutoSaveFurnaces(this, furnaceStorage, furnaceManagement);
     }
 
     @Override
     public void onDisable() {
         // Removing all the holograms
-        furnaceManagement.getList().removeAll(furnaceManagement.getList());
-        Bukkit.getConsoleSender().sendMessage("[Furnace Advanced] The plugin has been disabled.");
+        try {
+            furnaceStorage.save(furnaceManagement.snapshot());
+        } catch (IOException e) {
+            getLogger().severe("Save failed: " + e.getMessage());
+        } finally {
+            furnaceManagement.getList().removeAll(furnaceManagement.getList());
+            Bukkit.getConsoleSender().sendMessage("The plugin has been disabled.");
+        }
     }
 
     private void setUpPrePlugin() {

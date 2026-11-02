@@ -104,6 +104,7 @@ public class FurnacePlaceBreakListener implements Listener {
                     block.setType(Material.AIR);
                 }
 
+                furnaceManagement.removeFurnaceInformation(furnaceInformation);
                 event.getPlayer().getInventory().addItem(itemStack);
             } else {
                 event.getPlayer().sendMessage("[Furnace Advanced] This furnace is not registered the advanced technology");

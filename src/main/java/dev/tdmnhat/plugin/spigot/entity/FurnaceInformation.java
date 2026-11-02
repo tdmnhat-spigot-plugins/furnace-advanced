@@ -1,5 +1,9 @@
 package dev.tdmnhat.plugin.spigot.entity;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class FurnaceInformation {
 
     private String key; // "worldUUID;x;y;z"
@@ -94,5 +98,17 @@ public class FurnaceInformation {
 
     public void setAuthorUUID(String authorUUID) {
         this.authorUUID = authorUUID;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("worldUUID", worldUUID);
+        map.put("x", x);
+        map.put("y", y);
+        map.put("z", z);
+        map.put("cookTimeLevel", cookTimeLevel);
+        map.put("generateAmountLevel", generateAmountLevel);
+        map.put("authorUUID", authorUUID);
+        return map;
     }
 }
