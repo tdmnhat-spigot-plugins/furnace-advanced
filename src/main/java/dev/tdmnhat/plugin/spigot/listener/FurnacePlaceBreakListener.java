@@ -51,14 +51,16 @@ public class FurnacePlaceBreakListener implements Listener {
                         blockPlaced.getLocation(),
                         1,
                         1,
-                        player.getUniqueId().toString()
+                        player.getUniqueId().toString(),
+                        player.getName()
                 );
             } else {
                 furnaceInformation = generateFurnaceInformation(
                         blockPlaced.getLocation(),
                         cookLevel,
                         generateLevel,
-                        player.getUniqueId().toString()
+                        player.getUniqueId().toString(),
+                        player.getName()
                 );
             }
             furnaceManagement.addFurnaceInformation(furnaceInformation);
@@ -125,7 +127,12 @@ public class FurnacePlaceBreakListener implements Listener {
         return armorStand;
     }
 
-    private FurnaceInformation generateFurnaceInformation(Location world, int cookTimeLevel, int generateAmountLevel, String playerUuid) {
-        return new FurnaceInformation(world.getWorld().getUID().toString(), world.getBlockX(), world.getBlockY(), world.getBlockZ(), cookTimeLevel, generateAmountLevel, playerUuid);
+    private FurnaceInformation generateFurnaceInformation(Location world, int cookTimeLevel, int generateAmountLevel, String playerUuid, String playerName) {
+        return new FurnaceInformation(world.getWorld().getName(), world.getWorld().getUID().toString(), world.getBlockX(), world.getBlockY(), world.getBlockZ(), cookTimeLevel, generateAmountLevel, playerName, playerUuid, new ArrayList<>(){{
+            add(generateHologram(playerName, world.getBlock(), 1.0));
+            add(generateHologram("Cook Level: " + cookTimeLevel, world.getBlock(), 0.75));
+            add(generateHologram("Generate Level: " + generateAmountLevel, world.getBlock(), 0.5));
+            add(generateHologram("0 ➜ 0", world.getBlock(), 0.25));
+        }});
     }
 }

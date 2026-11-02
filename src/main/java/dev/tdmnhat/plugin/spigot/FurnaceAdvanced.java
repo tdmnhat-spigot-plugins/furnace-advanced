@@ -13,6 +13,7 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -61,6 +62,7 @@ public final class FurnaceAdvanced extends JavaPlugin {
         // Removing all the holograms
         try {
             furnaceStorage.save(furnaceManagement.snapshot());
+            furnaceManagement.getList().forEach(item -> item.getHolograms().forEach(Entity::remove));
         } catch (IOException e) {
             getLogger().severe("Save failed: " + e.getMessage());
         } finally {

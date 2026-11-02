@@ -1,12 +1,17 @@
 package dev.tdmnhat.plugin.spigot.entity;
 
+import org.bukkit.entity.ArmorStand;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FurnaceInformation {
 
     private String key; // "worldUUID;x;y;z"
+
+    private String worldName;
 
     private String worldUUID;
 
@@ -20,20 +25,27 @@ public class FurnaceInformation {
 
     private int generateAmountLevel;
 
+    private String authorName;
+
     private String authorUUID;
+
+    private List<ArmorStand> holograms;
 
     public FurnaceInformation() {
     }
 
-    public FurnaceInformation(String worldUUID, int x, int y, int z, int cookTimeLevel, int generateAmountLevel, String authorUUID) {
+    public FurnaceInformation(String worldName, String worldUUID, int x, int y, int z, int cookTimeLevel, int generateAmountLevel, String authorName, String authorUUID, List<ArmorStand> holograms) {
         this.key = String.format("%s;%d;%d;%d", worldUUID, x, y, z);
+        this.worldName = worldName;
         this.worldUUID = worldUUID;
         this.x = x;
         this.y = y;
         this.z = z;
         this.cookTimeLevel = cookTimeLevel;
         this.generateAmountLevel = generateAmountLevel;
+        this.authorName = authorName;
         this.authorUUID = authorUUID;
+        this.holograms = holograms;
     }
 
     public String getKey() {
@@ -42,6 +54,14 @@ public class FurnaceInformation {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getWorldName() {
+        return worldName;
+    }
+
+    public void setWorldName(String worldName) {
+        this.worldName = worldName;
     }
 
     public String getWorldUUID() {
@@ -92,12 +112,28 @@ public class FurnaceInformation {
         this.generateAmountLevel = generateAmountLevel;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
     public String getAuthorUUID() {
         return authorUUID;
     }
 
     public void setAuthorUUID(String authorUUID) {
         this.authorUUID = authorUUID;
+    }
+
+    public List<ArmorStand> getHolograms() {
+        return holograms;
+    }
+
+    public void setHolograms(List<ArmorStand> holograms) {
+        this.holograms = holograms;
     }
 
     public Map<String, Object> toMap() {

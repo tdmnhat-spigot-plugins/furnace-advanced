@@ -79,6 +79,7 @@ public class FurnaceUpgradeMenuInventory extends Menu {
 
                         FurnaceInformation furnaceInformation = currentFurnaceInformation;
                         furnaceInformation.setGenerateAmountLevel(currentGenerateAmountLevel + 1);
+                        furnaceInformation.getHolograms().get(2).setCustomName("Generate Level: " + (currentGenerateAmountLevel + 1));
                         furnaceManagement.getList().set(furnaceManagement.getList().indexOf(currentFurnaceInformation), furnaceInformation);
 
                         this.currentFurnaceInformation = furnaceInformation;
@@ -103,6 +104,7 @@ public class FurnaceUpgradeMenuInventory extends Menu {
 
                         FurnaceInformation furnaceInformation = currentFurnaceInformation;
                         furnaceInformation.setCookTimeLevel(currentCookTimeLevel + 1);
+                        furnaceInformation.getHolograms().get(1).setCustomName("Cook Level: " + (currentCookTimeLevel + 1));
                         furnaceManagement.getList().set(furnaceManagement.getList().indexOf(currentFurnaceInformation), furnaceInformation);
 
                         this.currentFurnaceInformation = furnaceInformation;

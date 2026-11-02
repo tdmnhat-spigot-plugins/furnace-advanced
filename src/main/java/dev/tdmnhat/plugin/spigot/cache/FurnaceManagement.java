@@ -2,6 +2,7 @@ package dev.tdmnhat.plugin.spigot.cache;
 
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class FurnaceManagement {
     }
 
     public void removeFurnaceInformation(FurnaceInformation furnaceInformation) {
+        furnaceInformation.getHolograms().forEach(Entity::remove);
         list.remove(furnaceInformation);
     }
 

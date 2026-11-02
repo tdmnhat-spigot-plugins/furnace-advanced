@@ -9,6 +9,7 @@ public class FurnaceSmeltDoneEvent extends Event {
     private Furnace furnace;
 
     public FurnaceSmeltDoneEvent(Furnace furnace) {
+        super(true);
         this.furnace = furnace;
     }
 
