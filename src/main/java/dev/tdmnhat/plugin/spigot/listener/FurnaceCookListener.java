@@ -92,7 +92,6 @@ public class FurnaceCookListener implements Listener {
         if(furnace.getCookTime() == 0) {
             FurnaceInformation furnaceInformation = furnaceManagement.getFurnaceInformation(furnace.getLocation());
             updateCookTime(furnace, furnaceInformation);
-            updateHologramFurnace(furnace, furnaceInformation);
             new FurnaceCookingProgress(plugin).addTask(furnace, furnaceInformation);
         }
     }
@@ -105,15 +104,5 @@ public class FurnaceCookListener implements Listener {
                 .orElse(cookLevelDtos.getFirst())
                 .getCookTime() * 20) + "");
         furnace.setCookTime(cookTime);
-    }
-
-    private void updateHologramFurnace(Furnace furnace, FurnaceInformation furnaceInformation) {
-        ArmorStand armorStand = furnaceInformation.getHolograms().get(3);
-        ItemStack getSmeltingItem = furnace.getInventory().getSmelting();
-        ItemStack getResultItem = furnace.getInventory().getResult();
-
-        int smeltingItemAmount = getSmeltingItem == null ? 0 : getSmeltingItem.getAmount();
-        int resultItemAmount = getResultItem == null ? 0 : getResultItem.getAmount();
-        armorStand.setCustomName(smeltingItemAmount + " ➜ " + resultItemAmount);
     }
 }

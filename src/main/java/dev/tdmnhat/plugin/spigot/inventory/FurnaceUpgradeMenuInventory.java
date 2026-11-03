@@ -23,6 +23,7 @@ import java.util.List;
 
 public class FurnaceUpgradeMenuInventory extends Menu {
 
+    private final FurnaceAdvanced plugin;
     private final Furnace furnace;
     private int currentGenerateAmountLevel;
     private int currentCookTimeLevel;
@@ -34,6 +35,7 @@ public class FurnaceUpgradeMenuInventory extends Menu {
 
     public FurnaceUpgradeMenuInventory(FurnaceAdvanced plugin, PlayerMenuUtility playerMenuUtility, Furnace target, FurnaceManagement furnaceManagement) {
         super(playerMenuUtility);
+        this.plugin = plugin;
         this.furnace = target;
         this.furnaceManagement = furnaceManagement;
         this.economy = VaultSetup.getEconomy();
@@ -53,7 +55,7 @@ public class FurnaceUpgradeMenuInventory extends Menu {
 
     @Override
     public String getMenuName() {
-        return "Furnace Upgrade Menu";
+        return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("furnace-upgrade-menu.title"));
     }
 
     @Override
@@ -72,20 +74,27 @@ public class FurnaceUpgradeMenuInventory extends Menu {
             switch (getSlotClicked) {
                 case 11: {
                     if (getListGenerateLevel.getLast().getLevel() == currentGenerateAmountLevel) {
-                        player.sendMessage("[Furnace Advanced] You have upgraded this to maximum level");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                plugin.getConfig().getString("plugin-prefix") + " " + plugin.getConfig().getString("furnace-already-max-level")
+                                ));
                     } else if (economy.getBalance(player) >= getListGenerateLevel.get(currentGenerateAmountLevel).getCost()) {
                         economy.withdrawPlayer(player, getListGenerateLevel.get(currentGenerateAmountLevel).getCost());
-                        player.sendMessage("[Furnace Advanced] Upgrade generate amount successfully");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                plugin.getConfig().getString("prefix-plugin") + " " + plugin.getConfig().getString("upgrade-successfully")));
 
                         FurnaceInformation furnaceInformation = currentFurnaceInformation;
                         furnaceInformation.setGenerateAmountLevel(currentGenerateAmountLevel + 1);
-                        furnaceInformation.getHolograms().get(2).setCustomName("Generate Level: " + (currentGenerateAmountLevel + 1));
+                        furnaceInformation.getHolograms().get(2).setCustomName(ChatColor.translateAlternateColorCodes('&',
+                                plugin.getConfig().getString("holograms.3rd-line").replace("%furnace_generate_level%", String.valueOf((currentGenerateAmountLevel + 1)))
+                                ));
                         furnaceManagement.getList().set(furnaceManagement.getList().indexOf(currentFurnaceInformation), furnaceInformation);
 
                         this.currentFurnaceInformation = furnaceInformation;
                         updateFurnaceLevel();
                     } else {
-                        player.sendMessage("[Furnace Advanced] You don't have enough money to upgrade this");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                plugin.getConfig().getString("prefix-plugin") + " " + plugin.getConfig().getString("not-enough-money-upgrade")
+                                ));
                     }
                     player.closeInventory();
                     this.open();
@@ -97,20 +106,26 @@ public class FurnaceUpgradeMenuInventory extends Menu {
                 }
                 case 15: {
                     if (getListCookLevel.getLast().getLevel() == currentCookTimeLevel) {
-                        player.sendMessage("[Furnace Advanced] You have already upgraded this to maximum level");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                plugin.getConfig().getString("prefix-plugin")
+                                        + " " + plugin.getConfig().getString("furnace-already-max-level")));
                     } else if (economy.getBalance(player) >= getListCookLevel.get(currentCookTimeLevel).getCost()) {
                         economy.withdrawPlayer(player, getListCookLevel.get(currentCookTimeLevel).getCost());
-                        player.sendMessage("[Furnace Advanced] Upgrade generate amount successfully");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                plugin.getConfig().getString("prefix-plugin")
+                                        + " " + plugin.getConfig().getString("upgrade-successfully")));
 
                         FurnaceInformation furnaceInformation = currentFurnaceInformation;
                         furnaceInformation.setCookTimeLevel(currentCookTimeLevel + 1);
-                        furnaceInformation.getHolograms().get(1).setCustomName("Cook Level: " + (currentCookTimeLevel + 1));
+                        furnaceInformation.getHolograms().get(1).setCustomName(ChatColor.translateAlternateColorCodes('&',
+                                plugin.getConfig().getString("holograms.2nd-line").replace("%furnace_cook_level%", String.valueOf((currentCookTimeLevel + 1)))));
                         furnaceManagement.getList().set(furnaceManagement.getList().indexOf(currentFurnaceInformation), furnaceInformation);
 
                         this.currentFurnaceInformation = furnaceInformation;
                         updateFurnaceLevel();
                     } else {
-                        player.sendMessage("[Furnace Advanced] You don't have enough money to upgrade this");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("prefix-plugin") + " "
+                        + plugin.getConfig().getString("not-enough-money-upgrade")));
                     }
                     player.closeInventory();
                     this.open();
@@ -128,39 +143,52 @@ public class FurnaceUpgradeMenuInventory extends Menu {
         this.inventory.setItem(11, makeItem(
                 Material.DIAMOND,
                 currentGenerateAmountLevel,
-                ChatColor.AQUA + "Generate Amount Level",
+                ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("furnace-upgrade-menu.generate-amount-item.name")),
                 new ArrayList<>() {{
-                    add("Increasing a number of item when smelting done");
-                    addAll(getListGenerateLevel.stream().map(item -> (item.getMin() == item.getMax() ? String.format("Level %d: Exactly %d amounts", item.getLevel(), item.getMin()) : String.format("Level %d: Range %d to %d amounts", item.getLevel(), item.getMin(), item.getMax())) + " " + (currentGenerateAmountLevel == item.getLevel() ? "(You)" : "")).toList());
-                    add(getListGenerateLevel.getLast().getLevel() == currentGenerateAmountLevel ? "You have upgraded this type to max level" : String.format("Cost: %.2f. To upgrade the level %d", getListGenerateLevel.get(currentGenerateAmountLevel).getCost(), getListGenerateLevel.get(currentGenerateAmountLevel).getLevel()));
+                    addAll(plugin.getConfig().getStringList("furnace-upgrade-menu.generate-amount-item.description").stream().map(item -> ChatColor.translateAlternateColorCodes('&', item)).toList());
+                    addAll(getListGenerateLevel.stream().map(item -> ChatColor.translateAlternateColorCodes('&', (item.getMin() == item.getMax() ? plugin.getConfig().getString("furnace-upgrade-menu.generate-amount-item.level-info.generate-exactly").replace("%furnace_generate_level%", String.valueOf(item.getLevel())).replace("%furnace_generate_amount%", String.valueOf(item.getMin()))
+                            : plugin.getConfig().getString("furnace-upgrade-menu.generate-amount-item.level-info.generate-range").replace("%furnace_generate_level%", String.valueOf(item.getLevel()))
+                            .replace("%furnace_generate_amount_min%", String.valueOf(item.getMin()))
+                            .replace("%furnace_generate_amount_max%", String.valueOf(item.getMax())))
+                            + " " + (currentGenerateAmountLevel == item.getLevel() ? plugin.getConfig().getString("furnace-upgrade-menu.current-level") : ""))).toList());
+                    add(ChatColor.translateAlternateColorCodes('&',
+                            getListGenerateLevel.getLast().getLevel() == currentGenerateAmountLevel ?
+                                    plugin.getConfig().getString("furnace-upgrade-menu.generate-amount-item.cost-info.already-max") :
+                                    plugin.getConfig().getString("furnace-upgrade-menu.generate-amount-item.cost-info.info")
+                                            .replace("%furnace_generate_cost%", String.valueOf(getListGenerateLevel.get(currentGenerateAmountLevel).getCost()))
+                                            .replace("%furnace_generate_next_level%", String.valueOf(getListGenerateLevel.get(currentGenerateAmountLevel).getLevel()))));
                 }}
         ));
 
         this.inventory.setItem(13, makeItem(
                 Material.FURNACE,
                 1,
-                ChatColor.GREEN + "Open the main furnace inventory",
+                ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("furnace-upgrade-menu.open-furnace-inventory.name")),
                 new ArrayList<>() {{
-                    add(ChatColor.WHITE + "This main inventory for adding ingredient for smelting");
-                    add(ChatColor.YELLOW + "The progress will be updated continuously in top this furnace");
+                    addAll(plugin.getConfig().getStringList("furnace-upgrade-menu.open-furnace-inventory.description").stream().map(item -> ChatColor.translateAlternateColorCodes('&', item)).toList());
                 }}
         ));
 
         this.inventory.setItem(15, makeItem(
                 (ServerVersion.getMajor() >= 26 || (ServerVersion.getMajor() == 1 && ServerVersion.getMinor() >= 13)) ? Material.CLOCK : Material.COMPASS,
                 currentCookTimeLevel,
-                ChatColor.YELLOW + "Upgrade the cooking time",
+                ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("furnace-upgrade-menu.cook-time-item.name")),
                 new ArrayList<>() {{
-                    add("Decreasing the time cook the ingredient");
-                    addAll(getListCookLevel.stream().map(item -> String.format("Level %d: %d seconds", item.getLevel(), item.getCookTime()) + " " + (currentCookTimeLevel == item.getLevel() ? "(You)" : "")).toList());
-                    add(String.format(getListCookLevel.getLast().getLevel() == currentCookTimeLevel ? "You have upgraded this type to max level" : String.format("Cost: %.2f. For upgrading to the level %d", getListCookLevel.get(currentCookTimeLevel).getCost(), getListCookLevel.get(currentCookTimeLevel).getLevel())));
+                    addAll(plugin.getConfig().getStringList("furnace-upgrade-menu.cook-time-item.description").stream().map(item -> ChatColor.translateAlternateColorCodes('&', item)).toList());
+                    addAll(getListCookLevel.stream().map(item -> ChatColor.translateAlternateColorCodes('&',
+                            plugin.getConfig().getString("furnace-upgrade-menu.cook-time-item.level-info").replace("%furnace_cook_level%", String.valueOf(item.getLevel())).replace("%furnace_cook_time%", String.valueOf(item.getCookTime()))
+                                    + " "
+                                    + (currentCookTimeLevel == item.getLevel() ? plugin.getConfig().getString("furnace-upgrade-menu.current-level") : ""))).toList());
+                    add(ChatColor.translateAlternateColorCodes('&', getListCookLevel.getLast().getLevel() == currentCookTimeLevel ?
+                            plugin.getConfig().getString("furnace-upgrade-menu.cook-time-item.cost-info.already-max") : plugin.getConfig().getString("furnace-upgrade-menu.cook-time-item.cost-info.info")
+                                    .replace("%furnace_cook_cost%", String.valueOf(getListCookLevel.get(currentCookTimeLevel).getCost())).replace("%furnace_cook_next_level%", String.valueOf(getListCookLevel.get(currentCookTimeLevel).getLevel()))));
                 }}
         ));
 
         this.inventory.setItem(22, makeItem(
                 Material.REDSTONE_BLOCK,
                 1,
-                ChatColor.RED + "Close Menu"
+                ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("furnace-upgrade-menu.close.name"))
         ));
     }
 }

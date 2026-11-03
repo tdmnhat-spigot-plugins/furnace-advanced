@@ -3,18 +3,21 @@ package dev.tdmnhat.plugin.spigot;
 import dev.tdmnhat.plugin.spigot.async.FileAsyncAction;
 import dev.tdmnhat.plugin.spigot.cache.FurnaceManagement;
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
-import dev.tdmnhat.plugin.spigot.listener.FurnaceCookListener;
-import dev.tdmnhat.plugin.spigot.listener.FurnaceInventoryListener;
-import dev.tdmnhat.plugin.spigot.listener.FurnacePlaceBreakListener;
-import dev.tdmnhat.plugin.spigot.listener.InventoryMenuItemListener;
+import dev.tdmnhat.plugin.spigot.listener.*;
 import dev.tdmnhat.plugin.spigot.setup.VaultSetup;
 import dev.tdmnhat.plugin.spigot.storage.FurnaceStorage;
+import dev.tdmnhat.plugin.spigot.util.hologram.FurnaceHologram;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +52,11 @@ public final class FurnaceAdvanced extends JavaPlugin {
         setUpPrePlugin();
 
         // Do any other actions
+        //// Clear old holograms
+        for(World world : this.getServer().getWorlds()) {
+            world.getEntities().stream().filter(FurnaceHologram::isHologram).forEach(Entity::remove);
+        }
+
         furnaceStorage = new FurnaceStorage(this);
         for (FurnaceInformation furnaceInformation : furnaceStorage.load()) {
             furnaceManagement.addFurnaceInformation(furnaceInformation);

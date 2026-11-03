@@ -11,23 +11,71 @@
 # You can take a look all the color code in this website: https://minecraftitemids.com/color-codes
 
 # Config the prefix plugin, every the message is notified the start message always contains the first prefix.
-plugin-prefix: "[Furnace Advanced]"
+prefix-plugin: "&d&l[&b&lFurnaceAdvanced&d&l]"
 
-# When the player do an action like executing the command, upgrade, place/break furnace that without permissions. Send them a message to let them know.
-not-permissions: "You don't have permission to do this action. Please contact the administrator to get permitted"
+# Upgrade the machine successfully.
+upgrade-successfully: "&aUpgrade this machine successfully"
 
-# When the player has placed the furnace block, send a message that they can upgrade it if they want.
-furnace-place: "You have placed the furnace block. Please hold 'sneaking' button and LEFT CLICK to open the furnace menu"
+# When the player tried to upgrade, but this part has been already maximum level.
+furnace-already-max-level: "&eThis upgrade has already been maximum level"
 
-# When the level generate result which the min and max amount result both different in config.yml. The message replace the Placeholder "%furnaceadvanced_furnace_item_generate%" in the furnace item
-range-generate-amount-result: "range %furnaceadvanced_furnace_item_generate_min% to %furnaceadvanced_furnace_item_generate_max% items"
+# If the player doesn't have enough money for upgrading, send them a message
+not-enough-money-upgrade: "&4You don't have enough money to upgrade this machine"
 
-###################################
-#                                 #
-#       Config Furnace Menu       #
-#                                 #
-###################################
+#
+#   Configuring the message on hologram. Caution: there are 4 lines, do not remove or change the structure
+#
 
+holograms:
+  # 1st line for showing author's furnace name
+  1st-line: "&e%player_name%" # This %player_name% for showing the player's name has placed the furnace.
+  # 2nd line for showing the cook level of the furnace
+  2nd-line: "&bCook Level &c%furnace_cook_level%" # This %furnace_cook_level% for showing the furnace's cook level
+  # 3rd line for showing the generate level of the furnace
+  3rd-line: "&5Generate Level &c%furnace_generate_level%" # This %furnace_generate_level% for showing the furnace's generation level
+  # 4th line for showing the progress status of smelting and resulting.
+  4th-line: "&6%furnace_smelting_amount% &f➜ &e%furnace_resulting_amount%"
+
+############################
+#                          #
+#       Config Menu#       #
+#                          #
+############################
+
+#
+#   Configuring the furnace upgrade menu
+#
+
+furnace-upgrade-menu:
+  title: "&eFurnace Upgrade Menu"       # Set a name to the furnace upgrade menu.
+  current-level: "&8(You)"
+  generate-amount-item:                 # Configure the name of the item
+    name: "&3Upgrade Generate Amount"
+    description:
+      - "&fIncreasing a number of item when smelting done"
+      - "&fIt's random a chance"
+    level-info:
+      generate-exactly: "&eLevel &c%furnace_generate_level%&e:&a Exactly &c%furnace_generate_amount% &aamounts"
+      generate-range: "&eLevel &c%furnace_generate_level%&e:&a Range &c%furnace_generate_amount_min% &ato &c%furnace_generate_amount_max% &aamounts"
+    cost-info:
+      info: "&7Cost: &4&l&u%furnace_generate_cost%&7. To upgrade the level &c&l%furnace_generate_next_level%"
+      already-max: "&aYou have already upgraded this type to max level"
+  open-furnace-inventory:
+    name: "&eOpen Furnace Inventory"
+    description:
+      - "&fPut your ingredients and get the result"
+      - "&fClick here to open the furnace inventory"
+  cook-time-item:
+    name: "&bUpgrade Cooking Time"
+    description:
+      - "&fDecreasing the time cook the ingredient"
+      - "&fMake the furnace cook faster than normal"
+    level-info: "&eLevel &c%furnace_cook_level%&e: &c%furnace_cook_time%&e seconds"
+    cost-info:
+      info: "&7Cost: &4&l&u%furnace_cook_cost%&7. To upgrade the level &4&l%furnace_cook_next_level%"
+      already-max: "&aYou have already upgraded this type to max level"
+  close:
+    name: "&4Close Menu"
 
 ####################################
 #                                  #

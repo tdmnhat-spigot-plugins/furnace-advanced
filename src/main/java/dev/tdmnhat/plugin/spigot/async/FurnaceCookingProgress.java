@@ -2,6 +2,7 @@ package dev.tdmnhat.plugin.spigot.async;
 
 import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class FurnaceCookingProgress {
 
     private final Map<String, BukkitTask> tasks = new HashMap<>();
-    private FurnaceAdvanced plugin;
+    private final FurnaceAdvanced plugin;
 
     public FurnaceCookingProgress(FurnaceAdvanced plugin) {
         this.plugin = plugin;
@@ -33,7 +34,7 @@ public class FurnaceCookingProgress {
                         stopTask(getKey);
                     }
                 }
-            }.runTaskTimer(plugin, 0L, 100L);
+            }.runTaskTimer(plugin, 0L, 50L);
             tasks.put(getKey, task);
         }
     }
@@ -52,6 +53,8 @@ public class FurnaceCookingProgress {
 
         int smeltingItemAmount = getSmeltingItem == null ? 0 : getSmeltingItem.getAmount();
         int resultItemAmount = getResultItem == null ? 0 : getResultItem.getAmount();
-        armorStand.setCustomName(smeltingItemAmount + " ➜ " + resultItemAmount);
+        armorStand.setCustomName(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.4th-line")
+                .replace("%furnace_smelting_amount%", String.valueOf(smeltingItemAmount))
+                        .replace("%furnace_resulting_amount%", String.valueOf(resultItemAmount))));
     }
 }

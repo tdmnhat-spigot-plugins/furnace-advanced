@@ -1,6 +1,7 @@
 package dev.tdmnhat.plugin.spigot.cache;
 
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 

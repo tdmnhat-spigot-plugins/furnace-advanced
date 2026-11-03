@@ -5,7 +5,9 @@ import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
 import dev.tdmnhat.plugin.spigot.cache.FurnaceManagement;
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
 import dev.tdmnhat.plugin.spigot.util.ServerVersion;
+import dev.tdmnhat.plugin.spigot.util.hologram.FurnaceHologram;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -119,20 +121,15 @@ public class FurnacePlaceBreakListener implements Listener {
     }
 
     private ArmorStand generateHologram(String name, Block target, double addHeight) {
-        ArmorStand armorStand = (ArmorStand) target.getWorld().spawnEntity(target.getLocation().add(0.5, addHeight, 0.5).subtract(0, 0.8, 0), EntityType.ARMOR_STAND);
-        armorStand.setVisible(false);
-        armorStand.setCustomName(name);
-        armorStand.setCustomNameVisible(true);
-        armorStand.setGravity(false);
-        return armorStand;
+        return new FurnaceHologram(name, target, addHeight).getHologram();
     }
 
     private FurnaceInformation generateFurnaceInformation(Location world, int cookTimeLevel, int generateAmountLevel, String playerUuid, String playerName) {
         return new FurnaceInformation(world.getWorld().getName(), world.getWorld().getUID().toString(), world.getBlockX(), world.getBlockY(), world.getBlockZ(), cookTimeLevel, generateAmountLevel, playerName, playerUuid, new ArrayList<>(){{
-            add(generateHologram(playerName, world.getBlock(), 1.0));
-            add(generateHologram("Cook Level: " + cookTimeLevel, world.getBlock(), 0.75));
-            add(generateHologram("Generate Level: " + generateAmountLevel, world.getBlock(), 0.5));
-            add(generateHologram("0 ➜ 0", world.getBlock(), 0.25));
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.1st-line").replace("%player_name%", playerName)), world.getBlock(), 1.0));
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.2nd-line").replace("%furnace_cook_level%", String.valueOf(cookTimeLevel))), world.getBlock(), 0.75));
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.3rd-line").replace("%furnace_generate_level%", String.valueOf(generateAmountLevel))), world.getBlock(), 0.5));
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.4th-line").replace("%furnace_smelting_amount%", "0").replace("%furnace_resulting_amount%", "0")), world.getBlock(), 0.25));
         }});
     }
 }

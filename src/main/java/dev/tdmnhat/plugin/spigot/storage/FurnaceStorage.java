@@ -2,7 +2,9 @@ package dev.tdmnhat.plugin.spigot.storage;
 
 import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
+import dev.tdmnhat.plugin.spigot.util.hologram.FurnaceHologram;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -69,12 +71,12 @@ public class FurnaceStorage {
                     furnace.getString("authorName"),
                     furnace.getString("authorUUID"),
                     new ArrayList<>(){{
-                        add(generateHologram(furnace.getString("authorName"), target.getBlock(), 1.0));
-                        add(generateHologram("Cook Level: " + furnace.getInt("cookTimeLevel"), target.getBlock(), 0.75));
-                        add(generateHologram("Generate Level: " + furnace.getInt("generateAmountLevel"), target.getBlock(), 0.5));
-                        add(generateHologram(Optional.ofNullable(target.getInventory().getSmelting()).orElse(new ItemStack(Material.AIR, 0)).getAmount()
-                                + " ➜ " +
-                                Optional.ofNullable(target.getInventory().getResult()).orElse(new ItemStack(Material.AIR, 0)).getAmount(), target.getBlock(), 0.25));
+                        add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.1st-line").replace("%player_name%", furnace.getString("authorName"))), target.getBlock(), 1.0));
+                        add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.2nd-line").replace("%furnace_cook_level%", String.valueOf(furnace.getInt("cookTimeLevel")))), target.getBlock(), 0.75));
+                        add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.3rd-line").replace("%furnace_generate_level%", String.valueOf(furnace.getInt("generateAmountLevel")))), target.getBlock(), 0.5));
+                        add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.4th-line")
+                                .replace("%furnace_smelting_amount%", String.valueOf(Optional.ofNullable(target.getInventory().getSmelting()).orElse(new ItemStack(Material.AIR, 0)).getAmount()))
+                                .replace("%furnace_resulting_amount%", String.valueOf(Optional.ofNullable(target.getInventory().getResult()).orElse(new ItemStack(Material.AIR, 0)).getAmount()))), target.getBlock(), 0.25));
                     }}
             ));
         }
@@ -109,11 +111,6 @@ public class FurnaceStorage {
     }
 
     private ArmorStand generateHologram(String name, Block target, double addHeight) {
-        ArmorStand armorStand = (ArmorStand) target.getWorld().spawnEntity(target.getLocation().add(0.5, addHeight, 0.5).subtract(0, 0.8, 0), EntityType.ARMOR_STAND);
-        armorStand.setVisible(false);
-        armorStand.setCustomName(name);
-        armorStand.setCustomNameVisible(true);
-        armorStand.setGravity(false);
-        return armorStand;
+        return new FurnaceHologram(name, target, addHeight).getHologram();
     }
 }

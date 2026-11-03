@@ -8,6 +8,7 @@ import dev.tdmnhat.plugin.spigot.inventory.FurnaceUpgradeMenuInventory;
 import dev.tdmnhat.plugin.spigot.inventory.Menu;
 import dev.tdmnhat.plugin.spigot.inventory.PlayerMenuUtility;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.ArmorStand;
@@ -40,14 +41,6 @@ public class FurnaceInventoryListener implements Listener {
 
             // Update hologram
             if(furnaceInformation != null) {
-                ArmorStand armorStand = furnaceInformation.getHolograms().get(3);
-                ItemStack getSmeltingItem = furnaceInventory.getSmelting();
-                ItemStack getResultItem = furnaceInventory.getResult();
-
-                int smeltingItemAmount = getSmeltingItem == null ? 0 : getSmeltingItem.getAmount();
-                int resultItemAmount = getResultItem == null ? 0 : getResultItem.getAmount();
-                armorStand.setCustomName(smeltingItemAmount + " ➜ " + resultItemAmount);
-
                 new FurnaceCookingProgress(plugin).addTask(furnaceInventory.getHolder(), furnaceInformation);
             }
         }
