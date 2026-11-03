@@ -1,8 +1,11 @@
 package dev.tdmnhat.plugin.spigot.cache;
 
 import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FurnaceManagement {
@@ -18,6 +21,7 @@ public class FurnaceManagement {
     }
 
     public void removeFurnaceInformation(FurnaceInformation furnaceInformation) {
+        furnaceInformation.getHolograms().forEach(Entity::remove);
         list.remove(furnaceInformation);
     }
 
@@ -32,5 +36,11 @@ public class FurnaceManagement {
 
     public List<FurnaceInformation> getList() {
         return list;
+    }
+
+    public List<FurnaceInformation> snapshot() {
+        List<FurnaceInformation> snapshot = new ArrayList<>(list.size());
+        snapshot.addAll(list);
+        return snapshot;
     }
 }
