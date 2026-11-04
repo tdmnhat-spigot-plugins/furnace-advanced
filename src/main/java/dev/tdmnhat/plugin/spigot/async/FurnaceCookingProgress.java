@@ -28,13 +28,14 @@ public class FurnaceCookingProgress {
                 @Override
                 public void run() {
                     ItemStack getSmeltingItem = furnace.getInventory().getSmelting();
-                    if (getSmeltingItem != null && getSmeltingItem.getAmount() > 0) {
+                    if (getSmeltingItem != null && getSmeltingItem.getAmount() > 0 || furnace.getType().isBurnable()) {
                         updateHologramFurnace(furnace, furnaceInformation);
                     } else {
+                        updateHologramFurnace(furnace, furnaceInformation);
                         stopTask(getKey);
                     }
                 }
-            }.runTaskTimer(plugin, 0L, 20L);
+            }.runTaskTimer(plugin, 0L, 10L);
             tasks.put(getKey, task);
         }
     }
