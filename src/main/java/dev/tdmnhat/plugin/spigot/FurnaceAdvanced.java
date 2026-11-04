@@ -1,19 +1,43 @@
 package dev.tdmnhat.plugin.spigot;
 
+import dev.tdmnhat.plugin.spigot.async.FileAsyncAction;
 import dev.tdmnhat.plugin.spigot.cache.FurnaceManagement;
-import dev.tdmnhat.plugin.spigot.command.FurnaceCommand;
-import dev.tdmnhat.plugin.spigot.entity.FurnaceInfo;
-import dev.tdmnhat.plugin.spigot.listener.FurnaceCookListener;
-import dev.tdmnhat.plugin.spigot.listener.FurnaceInteractedListener;
-import dev.tdmnhat.plugin.spigot.listener.FurnacePlaceBreakListener;
-import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceInventoryListener;
-import dev.tdmnhat.plugin.spigot.listener.inventory.FurnaceMenuListener;
+import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
+import dev.tdmnhat.plugin.spigot.listener.*;
+import dev.tdmnhat.plugin.spigot.setup.VaultSetup;
+import dev.tdmnhat.plugin.spigot.storage.FurnaceStorage;
+import dev.tdmnhat.plugin.spigot.util.hologram.FurnaceHologram;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public final class FurnaceAdvanced extends JavaPlugin {
+
+    private FurnaceManagement furnaceManagement;
+    private FurnaceStorage furnaceStorage;
+
+    @Override
+    public void onLoad() {
+        try {
+            furnaceManagement = new FurnaceManagement(new ArrayList<>());
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage("[Furnace Advanced] " + e.getMessage());
+            this.getPluginLoader().disablePlugin(this);
+        }
+    }
 
     @Override
     public void onEnable() {
@@ -25,12 +49,45 @@ public final class FurnaceAdvanced extends JavaPlugin {
 
         // Load commands
         registerCommands();
+
+        // Set up the pre-plugin
+        setUpPrePlugin();
+
+        // Run statistics
+        int pluginId = 35122;
+        Metrics metrics = new Metrics(this, pluginId);
+        metrics.addCustomChart(new SimplePie("chart_id", () -> "My value"));
+
+        // Do any other actions
+        //// Clear old holograms
+        for(World world : this.getServer().getWorlds()) {
+            world.getEntities().stream().filter(FurnaceHologram::isHologram).forEach(Entity::remove);
+        }
+
+        furnaceStorage = new FurnaceStorage(this);
+        for (FurnaceInformation furnaceInformation : furnaceStorage.load()) {
+            furnaceManagement.addFurnaceInformation(furnaceInformation);
+        }
+
+        FileAsyncAction.startAutoSaveFurnaces(this, furnaceStorage, furnaceManagement);
     }
 
     @Override
     public void onDisable() {
         // Removing all the holograms
-        FurnaceManagement.getInstance().getFurnaceInfos().stream().map(FurnaceInfo::getHolograms).forEach(armorStands -> armorStands.forEach(Entity::remove));
+        try {
+            furnaceStorage.save(furnaceManagement.getList());
+            furnaceManagement.getList().forEach(item -> item.getHolograms().forEach(Entity::remove));
+        } catch (IOException e) {
+            getLogger().severe("Save failed: " + e.getMessage());
+        } finally {
+            furnaceManagement.getList().removeAll(furnaceManagement.getList());
+            Bukkit.getConsoleSender().sendMessage("The plugin has been disabled.");
+        }
+    }
+
+    private void setUpPrePlugin() {
+        new VaultSetup(this);   // Setup Vault
     }
 
     private void registerConfig() {
@@ -40,21 +97,18 @@ public final class FurnaceAdvanced extends JavaPlugin {
     }
 
     private void registerListeners() {
+        // Other events
+
         // Menu Inventory
-        this.getServer().getPluginManager().registerEvents(new FurnaceInventoryListener(), this);
-        this.getServer().getPluginManager().registerEvents(new FurnaceMenuListener(), this);
+        this.getServer().getPluginManager().registerEvents(new FurnaceInventoryListener(this, furnaceManagement), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryMenuItemListener(), this);
 
         // Action Inventory
-        this.getServer().getPluginManager().registerEvents(new FurnaceInteractedListener(), this);
-        this.getServer().getPluginManager().registerEvents(new FurnacePlaceBreakListener(), this);
-        this.getServer().getPluginManager().registerEvents(new FurnaceCookListener(), this);
+        this.getServer().getPluginManager().registerEvents(new FurnacePlaceBreakListener(furnaceManagement), this);
+        this.getServer().getPluginManager().registerEvents(new FurnaceCookListener(this, furnaceManagement), this);
     }
 
     private void registerCommands() {
-        this.getCommand("furnaceadvanced").setExecutor(new FurnaceCommand(this));
-    }
 
-    public static Plugin getPlugin() {
-        return Bukkit.getPluginManager().getPlugin("FurnaceAdvanced");
     }
 }

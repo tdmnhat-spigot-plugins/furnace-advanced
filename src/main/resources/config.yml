@@ -11,23 +11,86 @@
 # You can take a look all the color code in this website: https://minecraftitemids.com/color-codes
 
 # Config the prefix plugin, every the message is notified the start message always contains the first prefix.
-plugin-prefix: "[Furnace Advanced]"
+prefix-plugin: "&d&l[&b&lFurnaceAdvanced&d&l]"
 
-# When the player do an action like executing the command, upgrade, place/break furnace that without permissions. Send them a message to let them know.
-not-permissions: "You don't have permission to do this action. Please contact the administrator to get permitted"
+# Upgrade the machine successfully.
+upgrade-successfully: "&aUpgrade this machine successfully"
 
-# When the player has placed the furnace block, send a message that they can upgrade it if they want.
-furnace-place: "You have placed the furnace block. Please hold 'sneaking' button and LEFT CLICK to open the furnace menu"
+# When the player tried to upgrade, but this part has been already maximum level.
+furnace-already-max-level: "&eThis upgrade has already been maximum level"
 
-# When the level generate result which the min and max amount result both different in config.yml. The message replace the Placeholder "%furnaceadvanced_furnace_item_generate%" in the furnace item
-range-generate-amount-result: "range %furnaceadvanced_furnace_item_generate_min% to %furnaceadvanced_furnace_item_generate_max% items"
+# If the player doesn't have enough money for upgrading, send them a message
+not-enough-money-upgrade: "&4You don't have enough money to upgrade this machine"
 
-###################################
-#                                 #
-#       Config Furnace Menu       #
-#                                 #
-###################################
+#
+#   Configuring the item lines when you get the furnace item into your slot inventory
+#
+item-inventory:
+  display-name: "&d&l[&b&lFurnaceAdvanced&d&l]&f&l Furnace Technology"
+  line: # Show the furnace information in your furnace item inventory. Do not remove the couple %...% or change format, but you can adjust the position for your customize in that line (not other line)
+    # 1st line for showing author's furnace name
+    1st-line: "&7Author: &e%player_name%"
+    # 2nd line for showing the cook level of the furnace
+    2nd-line: "&7Cook Level: &c%furnace_cook_level%"
+    # 3rd line for showing the generate level of the furnace
+    3rd-line: "&7Generate Level: &c%furnace_generate_level%"
+  description:
+    - "&fPlace the furnace and&4 SNEAKING + RIGHT-CLICK&f to open upgrade menu"
 
+#
+#   Configuring the message on hologram. Caution: there are 4 lines, do not remove or change the structure
+#
+
+holograms:
+  # 1st line for showing author's furnace name
+  1st-line: "&e%player_name%" # This %player_name% for showing the player's name has placed the furnace.
+  # 2nd line for showing the cook level of the furnace
+  2nd-line: "&bCook Level &c%furnace_cook_level%" # This %furnace_cook_level% for showing the furnace's cook level
+  # 3rd line for showing the generate level of the furnace
+  3rd-line: "&5Generate Level &c%furnace_generate_level%" # This %furnace_generate_level% for showing the furnace's generation level
+  # 4th line for showing the progress status of smelting and resulting.
+  4th-line: "&6%furnace_smelting_amount% &f➜ &e%furnace_resulting_amount%"
+
+############################
+#                          #
+#       Config Menu#       #
+#                          #
+############################
+
+#
+#   Configuring the furnace upgrade menu
+#
+
+furnace-upgrade-menu:
+  title: "&eFurnace Upgrade Menu"       # Set a name to the furnace upgrade menu.
+  current-level: "&8(You)"
+  generate-amount-item:                 # Configure the name of the item
+    name: "&3Upgrade Generate Amount"
+    description:
+      - "&fIncreasing a number of item when smelting done"
+      - "&fIt's random a chance"
+    level-info:
+      generate-exactly: "&eLevel &c%furnace_generate_level%&e:&a Exactly &c%furnace_generate_amount% &aamounts"
+      generate-range: "&eLevel &c%furnace_generate_level%&e:&a Range &c%furnace_generate_amount_min% &ato &c%furnace_generate_amount_max% &aamounts"
+    cost-info:
+      info: "&7Cost: &4&l%furnace_generate_cost%&7. To upgrade the level &c&l%furnace_generate_next_level%"
+      already-max: "&aYou have already upgraded this type to max level"
+  open-furnace-inventory:
+    name: "&eOpen Furnace Inventory"
+    description:
+      - "&fPut your ingredients and get the result"
+      - "&fClick here to open the furnace inventory"
+  cook-time-item:
+    name: "&bUpgrade Cooking Time"
+    description:
+      - "&fDecreasing the time cook the ingredient"
+      - "&fMake the furnace cook faster than normal"
+    level-info: "&eLevel &c%furnace_cook_level%&e: &c%furnace_cook_time%&e seconds"
+    cost-info:
+      info: "&7Cost: &4&l%furnace_cook_cost%&7. To upgrade the level &4&l%furnace_cook_next_level%"
+      already-max: "&aYou have already upgraded this type to max level"
+  close:
+    name: "&4Close Menu"
 
 ####################################
 #                                  #
@@ -41,9 +104,7 @@ range-generate-amount-result: "range %furnaceadvanced_furnace_item_generate_min%
 #     cost: 100  --> this describes the cost of money for this upgrading. In the first level, you don't need to specify the cost.
 #     min: 1  --> this describes the minimum amount of the result This value "MUST BE A POSITIVE NUMBER AND SMALLER THAN MAX"
 #     max: 4  --> this describes the maximum amount of the result. If you set the value equal the min, it means the amount of the result will be generated exactly that value after cooking done. This value "MUST BE A POSITIVE NUMBER AND GREATER THAN MIN"
-#     commands:
-#       - "give %player_name% minecraft:diamond_ore 10"   --> this describes the command that will be executed when the player want to upgrade. You can customize the command like taking money, points, or something else like conditionals. You can execute multiple command if you want.
-generate-result-level:
+generate-level:
   1:
     min: 1
     max: 1
@@ -65,22 +126,22 @@ generate-result-level:
     max: 8
 
 # Config the furnace level. Here your example:
-# level:
+# cook-level:
 #   1: --> this describes the level the cooking time. This row of this level "MUST BE A POSITIVE NUMBER"
 #     cost: 10 --> this describes the level of the furnace level. This row of this level "MUST BE A POSITIVE NUMBER"
-#     cookTime: 10  --> this describes that the time which cooks the ingredient is 10 seconds. This value "MUST BE A POSITIVE NUMBER"
+#     cook-time: 10  --> this describes that the time which cooks the ingredient is 10 seconds. This value "MUST BE A POSITIVE NUMBER"
 cook-level:
   1:
-    cookTime: 10
+    cook-time: 10
   2:
     cost: 150
-    cookTime: 9
+    cook-time: 9
   3:
     cost: 300
-    cookTime: 7
+    cook-time: 7
   4:
     cost: 500
-    cookTime: 5
+    cook-time: 5
   5:
     cost: 1000
-    cookTime: 3
+    cook-time: 3

@@ -9,6 +9,8 @@ jobs:
       pull-requests: write
       checks: write
     runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
@@ -19,7 +21,7 @@ jobs:
         uses: actions/setup-java@v6.1.0
         with:
           distribution: temurin
-          java-version: '8'
+          java-version: '25'
           cache: maven
 
       - name: Build Project With Maven
@@ -29,9 +31,7 @@ jobs:
         id: get-version
         run: |
           JAR=$(ls target/*.jar | grep -v -E '(sources|javadoc|original)' | head -n 1)
-          echo "JAR_PATH=$JAR" >> "$GITHUB_ENV"
-          # Read pom.properties embedded in the jar (Maven puts it there)
-          VERSION=$(unzip -p "$JAR" 'META-INF/maven/*/pom.properties' | grep '^version=' | cut -d= -f2)
+          VERSION=$(unzip -p "$JAR" plugin.yml | grep -m1 '^version:' | sed -E "s/^version:[[:space:]]*['\"]?([^'\"]+)['\"]?.*/\1/")
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -41,7 +41,7 @@ jobs:
           echo "RELEASE_TAG=v$VERSION" >> "$GITHUB_ENV"
 
       - name: Upload Jar
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: app-jar
           path: target/*.jar
@@ -50,15 +50,13 @@ jobs:
     needs: checkout-project
     permissions:
       contents: write
-      pull-requests: write
-      checks: write
     runs-on: ubuntu-22.04
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       VERSION: ${{ needs.checkout-project.outputs.version }}
     steps:
       - name: Download Jar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.2
         with:
           name: app-jar
           path: dist
@@ -66,6 +64,10 @@ jobs:
       - name: Create Tag With Version In Variable Environment
         run: |
           echo "RELEASE_TAG=v$VERSION" >> "$GITHUB_ENV"
+          if gh api "repos/${{ github.repository }}/git/ref/tags/v$VERSION" >/dev/null 2>&1; then
+            echo "::error::Tag v$VERSION already exists. Bump the version in pom.xml."
+            exit 1
+          fi
           gh api "repos/${{ github.repository }}/git/refs" \
             -f ref="refs/tags/v$VERSION" \
             -f sha="${{ github.sha }}"
