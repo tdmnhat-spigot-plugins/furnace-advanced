@@ -3,17 +3,8 @@ description: $description
 version: '${version}'
 
 main: dev.tdmnhat.plugin.spigot.FurnaceAdvanced
-api-version: '1.13'
+api-version: '1.12'
+
+depend: [NBTAPI]
 
 authors: [ tdminhnhat ]
-
-commands:
-  furnaceadvanced:
-    permission: furnaceadvanced.command.help
-    description: A command to show all the commands in this plugin
-    usage: /<command>
-
-permissions:
-  furnaceadvanced.command.help:
-    description: A permission to allow the player can view all the commands in this plugin
-    default: op

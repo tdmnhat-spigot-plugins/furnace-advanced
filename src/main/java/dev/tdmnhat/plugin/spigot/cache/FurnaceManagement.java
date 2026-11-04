@@ -1,27 +1,46 @@
 package dev.tdmnhat.plugin.spigot.cache;
 
-import dev.tdmnhat.plugin.spigot.entity.FurnaceInfo;
+import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FurnaceManagement {
 
-    private static FurnaceManagement instance;
-    private List<FurnaceInfo> furnaceInfos;
+    private final List<FurnaceInformation> list;
 
-    private FurnaceManagement() {
-        furnaceInfos = new ArrayList<>();
+    public FurnaceManagement(List<FurnaceInformation> list) {
+        this.list = list;
     }
 
-    public static FurnaceManagement getInstance() {
-        if(instance == null) {
-            instance = new FurnaceManagement();
-        }
-        return instance;
+    public void addFurnaceInformation(FurnaceInformation furnaceInformation) {
+        list.add(furnaceInformation);
     }
 
-    public List<FurnaceInfo> getFurnaceInfos() {
-        return furnaceInfos;
+    public void removeFurnaceInformation(FurnaceInformation furnaceInformation) {
+        furnaceInformation.getHolograms().forEach(Entity::remove);
+        list.remove(furnaceInformation);
+    }
+
+    public FurnaceInformation getFurnaceInformation(Location location) {
+        return list.stream().filter(
+                item -> item.getWorldUUID().equalsIgnoreCase(location.getWorld().getUID().toString())
+                && location.getBlockX() == item.getX()
+                && location.getBlockY() == item.getY()
+                && location.getBlockZ() == item.getZ()
+        ).findFirst().orElse(null);
+    }
+
+    public List<FurnaceInformation> getList() {
+        return list;
+    }
+
+    public List<FurnaceInformation> snapshot() {
+        List<FurnaceInformation> snapshot = new ArrayList<>(list.size());
+        snapshot.addAll(list);
+        return snapshot;
     }
 }

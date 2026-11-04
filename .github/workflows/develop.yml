@@ -1,0 +1,22 @@
+name: Checkout and build project
+on:
+  push:
+    branches: ["develop"]
+jobs:
+  build-and-cache:
+    permissions:
+      contents: read
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Setup JDK
+        uses: actions/setup-java@v6.1.0
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Build Project With Maven
+        run: mvn -B clean package

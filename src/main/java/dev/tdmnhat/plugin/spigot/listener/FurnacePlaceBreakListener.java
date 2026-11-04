@@ -1,97 +1,79 @@
 package dev.tdmnhat.plugin.spigot.listener;
 
+import de.tr7zw.nbtapi.NBT;
 import dev.tdmnhat.plugin.spigot.FurnaceAdvanced;
 import dev.tdmnhat.plugin.spigot.cache.FurnaceManagement;
-import dev.tdmnhat.plugin.spigot.entity.FurnaceInfo;
+import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
 import dev.tdmnhat.plugin.spigot.util.ServerVersion;
+import dev.tdmnhat.plugin.spigot.util.hologram.FurnaceHologram;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class FurnacePlaceBreakListener implements Listener {
 
-    private FurnaceAdvanced plugin;
+    private final FurnaceManagement furnaceManagement;
+    private final FurnaceAdvanced plugin;
 
-    public FurnacePlaceBreakListener() {
+    public FurnacePlaceBreakListener(FurnaceManagement furnaceManagement) {
+        this.furnaceManagement = furnaceManagement;
         plugin = (FurnaceAdvanced) Bukkit.getPluginManager().getPlugin("FurnaceAdvanced");
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        Block blockAgainst = event.getBlockAgainst();
-        if (checkIfTheBlockIsFurnace(blockAgainst.getType())) {
-            event.setBuild(false);
-            event.setCancelled(true);
-            return;
-        }
-
-        // Handle
+        // Handles
         Material material = event.getBlock().getType();
         Player player = event.getPlayer();
         if (checkIfTheBlockIsFurnace(material)) {
             Furnace blockPlaced = (Furnace) event.getBlock().getState();
-            ItemMeta furnaceItemMeta = getFurnaceItemMeta(event);
+            ItemStack itemInHand = getFurnaceInHand(event);
 
-            FurnaceInfo furnaceInfo;
-            if (furnaceItemMeta == null || furnaceItemMeta.getLore() == null) {
-                furnaceInfo = generateFurnaceInfo(
-                        "1",
-                        player.getName(),
-                        blockPlaced.getType().toString(),
-                        1,
-                        1,
+            String author = NBT.get(itemInHand, nbt -> (String) nbt.getString("Author"));
+            Integer cookLevel = NBT.get(itemInHand, nbt -> (Integer) nbt.getInteger("Cook Level"));
+            Integer generateLevel = NBT.get(itemInHand, nbt -> (Integer) nbt.getInteger("Generate Level"));
+
+            FurnaceInformation furnaceInformation;
+            if (author.isEmpty() || cookLevel == 0 || generateLevel == 0) {
+                furnaceInformation = generateFurnaceInformation(
                         blockPlaced.getLocation(),
-                        List.of(generateHologram(player.getName(), blockPlaced.getBlock(), 1),
-                                generateHologram("Cook Time Level: 1", blockPlaced.getBlock(), 0.75),
-                                generateHologram("Generate Level: 1", blockPlaced.getBlock(), 0.5),
-                                generateHologram("0 | 0", blockPlaced.getBlock(), 0.25)
-                        )
+                        1,
+                        1,
+                        player.getUniqueId().toString(),
+                        player.getName()
                 );
             } else {
-                String id = furnaceItemMeta.getLore().stream().filter(lore -> lore.contains("ID:")).findFirst().orElse("ID: 1").replace("ID:", "").trim();
-                String author = furnaceItemMeta.getLore().stream().filter(lore -> lore.contains("Author:")).findFirst().orElse("Author: " + player.getName()).replace("Author:", "").trim();
-                int cookTimeLevel = Integer.parseInt(furnaceItemMeta.getLore().stream().filter(lore -> lore.contains("Cook Time Level:")).findFirst().orElse("Cook Time Level: 1").replace("Cook Time Level:", "").trim());
-                int generateAmountLevel = Integer.parseInt(furnaceItemMeta.getLore().stream().filter(lore -> lore.contains("Generate Amount Level:")).findFirst().orElse("Generate Amount Level: 1").replace("Generate Amount Level:", "").trim());
-
-                furnaceInfo = generateFurnaceInfo(id, author, blockPlaced.getType().toString(), cookTimeLevel, generateAmountLevel, blockPlaced.getLocation(), List.of(
-                        generateHologram(player.getName(), blockPlaced.getBlock(), 1),
-                        generateHologram("Cook Tim Level: " + cookTimeLevel, blockPlaced.getBlock(), 0.75),
-                        generateHologram("Generate Level: " + generateAmountLevel, blockPlaced.getBlock(), 0.5),
-                        generateHologram("0 | 0", blockPlaced.getBlock(), 0.25)
-                ));
+                furnaceInformation = generateFurnaceInformation(
+                        blockPlaced.getLocation(),
+                        cookLevel,
+                        generateLevel,
+                        player.getUniqueId().toString(),
+                        player.getName()
+                );
             }
-            FurnaceManagement.getInstance().getFurnaceInfos().add(furnaceInfo);
+            furnaceManagement.addFurnaceInformation(furnaceInformation);
         }
     }
 
-    private ItemMeta getFurnaceItemMeta(BlockPlaceEvent event) {
-        ItemStack getFurnaceInHand;
-
-        // Get information from the furnace in player's hand
+    private ItemStack getFurnaceInHand(BlockPlaceEvent event) {
         if ((ServerVersion.getMajor() == 1 && ServerVersion.getMinor() < 8) || ServerVersion.getMajor() >= 26) {
-            getFurnaceInHand = event.getPlayer().getInventory().getItemInMainHand();
+            return event.getPlayer().getInventory().getItemInMainHand();
         } else {
-            getFurnaceInHand = event.getPlayer().getItemInHand();
+            return event.getPlayer().getItemInHand();
         }
-
-        // Retrieve information from the furnace in player's hand and store into memory cache
-        return getFurnaceInHand.getItemMeta();
     }
 
     @EventHandler
@@ -99,28 +81,24 @@ public class FurnacePlaceBreakListener implements Listener {
         Material material = event.getBlock().getType();
         if (checkIfTheBlockIsFurnace(material)) {
             Block block = event.getBlock();
-            FurnaceInfo furnaceInfo = FurnaceManagement.getInstance().getFurnaceInfos().stream().filter(furnace -> furnace.getPlaceLocation().equals(block.getLocation())).findFirst().orElse(null);
+            FurnaceInformation furnaceInformation = furnaceManagement.getFurnaceInformation(block.getLocation());
 
-            if (furnaceInfo != null) {
-                ItemStack itemStack = new ItemStack(block.getType());
+            if (furnaceInformation != null) {
+                ItemStack itemStack = new ItemStack(block.getType(), 1);
+                NBT.modify(itemStack, nbt -> {
+                    nbt.setString("Author", event.getPlayer().getName());
+                    nbt.setInteger("Cook Level", furnaceInformation.getCookTimeLevel());
+                    nbt.setInteger("Generate Level", furnaceInformation.getGenerateAmountLevel());
+                });
                 ItemMeta itemMeta = itemStack.getItemMeta();
-
-                itemMeta.setDisplayName("[Furnace Advanced] Furnace Technology");
-                itemMeta.addEnchant(Enchantment.SILK_TOUCH, 1, false);
-                itemMeta.setLore(List.of(
-                        "ID: " + furnaceInfo.getId(),
-                        "Author: " + furnaceInfo.getAuthor(),
-                        "Cook Time Level: " + furnaceInfo.getCookTimeLevel(),
-                        "Generate Amount Level: " + furnaceInfo.getGenerateAmountLevel()
-                ));
-
-                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.display-name")));
+                itemMeta.setLore(new ArrayList<>(){{
+                    add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.line.1st-line").replace("%player_name%", furnaceInformation.getAuthorName())));
+                    add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.line.2nd-line").replace("%furnace_cook_level%", String.valueOf(furnaceInformation.getCookTimeLevel()))));
+                    add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.line.3rd-line").replace("%furnace_generate_level%", String.valueOf(furnaceInformation.getGenerateAmountLevel()))));
+                    addAll(plugin.getConfig().getStringList("item-inventory.description").stream().map(line -> ChatColor.translateAlternateColorCodes('&', line)).toList());
+                }});
                 itemStack.setItemMeta(itemMeta);
-                event.getPlayer().getInventory().addItem(itemStack);
-
-                // Remove hologram & furnace management
-                furnaceInfo.getHolograms().forEach(Entity::remove);
-                FurnaceManagement.getInstance().getFurnaceInfos().remove(furnaceInfo);
 
                 // Disable drop items. The version from 1.12+ has the method setDropItems()
                 if (ServerVersion.getMajor() >= 26 || (ServerVersion.getMinor() >= 12)) {
@@ -129,28 +107,27 @@ public class FurnacePlaceBreakListener implements Listener {
                     event.setCancelled(true);
                     block.setType(Material.AIR);
                 }
-            } else {
-                event.getPlayer().sendMessage("[Furnace Advanced] This furnace is not registered the advanced technology");
+
+                furnaceManagement.removeFurnaceInformation(furnaceInformation);
+                event.getPlayer().getInventory().addItem(itemStack);
             }
         }
     }
 
     private boolean checkIfTheBlockIsFurnace(Material target) {
-        return target.toString().equalsIgnoreCase("FURNACE") || target.toString().equalsIgnoreCase("BLAST_FURNACE") || target.toString().equalsIgnoreCase("BURNING_FURNACE");
+        return target.toString().equalsIgnoreCase("FURNACE") || target.toString().equalsIgnoreCase("BURNING_FURNACE");
     }
 
     private ArmorStand generateHologram(String name, Block target, double addHeight) {
-        ArmorStand armorStand = (ArmorStand) target.getWorld().spawnEntity(target.getLocation().add(0.5, addHeight, 0.5).subtract(0, 0.8, 0), EntityType.ARMOR_STAND);
-        armorStand.setVisible(false);
-        armorStand.setCustomName(name);
-        armorStand.setCustomNameVisible(true);
-        armorStand.setGravity(false);
-        return armorStand;
+        return new FurnaceHologram(name, target, addHeight).getHologram();
     }
 
-    private FurnaceInfo generateFurnaceInfo(String id, String author, String type, int cookTimeLevel, int generateAmountLevel, Location placedLocation, List<ArmorStand> holograms) {
-        return new FurnaceInfo(
-                id, author, type, cookTimeLevel, generateAmountLevel, placedLocation, holograms
-        );
+    private FurnaceInformation generateFurnaceInformation(Location world, int cookTimeLevel, int generateAmountLevel, String playerUuid, String playerName) {
+        return new FurnaceInformation(world.getWorld().getName(), world.getWorld().getUID().toString(), world.getBlockX(), world.getBlockY(), world.getBlockZ(), cookTimeLevel, generateAmountLevel, playerName, playerUuid, new ArrayList<>(){{
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.1st-line").replace("%player_name%", playerName)), world.getBlock(), 1.0));
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.2nd-line").replace("%furnace_cook_level%", String.valueOf(cookTimeLevel))), world.getBlock(), 0.75));
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.3rd-line").replace("%furnace_generate_level%", String.valueOf(generateAmountLevel))), world.getBlock(), 0.5));
+            add(generateHologram(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("holograms.4th-line").replace("%furnace_smelting_amount%", "0").replace("%furnace_resulting_amount%", "0")), world.getBlock(), 0.25));
+        }});
     }
 }
