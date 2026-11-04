@@ -10,6 +10,8 @@ import dev.tdmnhat.plugin.spigot.util.hologram.FurnaceHologram;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -51,6 +53,11 @@ public final class FurnaceAdvanced extends JavaPlugin {
         // Set up the pre-plugin
         setUpPrePlugin();
 
+        // Run statistics
+        int pluginId = 35122;
+        Metrics metrics = new Metrics(this, pluginId);
+        metrics.addCustomChart(new SimplePie("chart_id", () -> "My value"));
+
         // Do any other actions
         //// Clear old holograms
         for(World world : this.getServer().getWorlds()) {
@@ -69,7 +76,7 @@ public final class FurnaceAdvanced extends JavaPlugin {
     public void onDisable() {
         // Removing all the holograms
         try {
-            furnaceStorage.save(furnaceManagement.snapshot());
+            furnaceStorage.save(furnaceManagement.getList());
             furnaceManagement.getList().forEach(item -> item.getHolograms().forEach(Entity::remove));
         } catch (IOException e) {
             getLogger().severe("Save failed: " + e.getMessage());

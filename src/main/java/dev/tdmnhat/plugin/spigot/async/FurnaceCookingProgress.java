@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class FurnaceCookingProgress {
 
-    private final Map<String, BukkitTask> tasks = new HashMap<>();
+    private static final Map<String, BukkitTask> tasks = new HashMap<>();
     private final FurnaceAdvanced plugin;
 
     public FurnaceCookingProgress(FurnaceAdvanced plugin) {
@@ -34,7 +34,7 @@ public class FurnaceCookingProgress {
                         stopTask(getKey);
                     }
                 }
-            }.runTaskTimer(plugin, 0L, 50L);
+            }.runTaskTimer(plugin, 0L, 20L);
             tasks.put(getKey, task);
         }
     }

@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -87,16 +86,17 @@ public class FurnacePlaceBreakListener implements Listener {
             if (furnaceInformation != null) {
                 ItemStack itemStack = new ItemStack(block.getType(), 1);
                 NBT.modify(itemStack, nbt -> {
-                    nbt.setString("Author", event.getPlayer().getUniqueId().toString().equals(furnaceInformation.getAuthorUUID()) ? event.getPlayer().getName() : "Anonymous");
+                    nbt.setString("Author", event.getPlayer().getName());
                     nbt.setInteger("Cook Level", furnaceInformation.getCookTimeLevel());
                     nbt.setInteger("Generate Level", furnaceInformation.getGenerateAmountLevel());
                 });
                 ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.setDisplayName("[Furnace Advanced] Furnace Technology");
+                itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.display-name")));
                 itemMeta.setLore(new ArrayList<>(){{
-                    add("Author: " + (furnaceInformation.getAuthorUUID().toString().equals(event.getPlayer().getUniqueId().toString()) ? event.getPlayer().getName() : "Anonymous"));
-                    add("Cook Level: " + furnaceInformation.getCookTimeLevel());
-                    add("Generate Level: " + furnaceInformation.getGenerateAmountLevel());
+                    add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.line.1st-line").replace("%player_name%", furnaceInformation.getAuthorName())));
+                    add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.line.2nd-line").replace("%furnace_cook_level%", String.valueOf(furnaceInformation.getCookTimeLevel()))));
+                    add(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("item-inventory.line.3rd-line").replace("%furnace_generate_level%", String.valueOf(furnaceInformation.getGenerateAmountLevel()))));
+                    addAll(plugin.getConfig().getStringList("item-inventory.description").stream().map(line -> ChatColor.translateAlternateColorCodes('&', line)).toList());
                 }});
                 itemStack.setItemMeta(itemMeta);
 
@@ -110,14 +110,12 @@ public class FurnacePlaceBreakListener implements Listener {
 
                 furnaceManagement.removeFurnaceInformation(furnaceInformation);
                 event.getPlayer().getInventory().addItem(itemStack);
-            } else {
-                event.getPlayer().sendMessage("[Furnace Advanced] This furnace is not registered the advanced technology");
             }
         }
     }
 
     private boolean checkIfTheBlockIsFurnace(Material target) {
-        return target.toString().equalsIgnoreCase("FURNACE") || target.toString().equalsIgnoreCase("BLAST_FURNACE") || target.toString().equalsIgnoreCase("BURNING_FURNACE");
+        return target.toString().equalsIgnoreCase("FURNACE") || target.toString().equalsIgnoreCase("BURNING_FURNACE");
     }
 
     private ArmorStand generateHologram(String name, Block target, double addHeight) {

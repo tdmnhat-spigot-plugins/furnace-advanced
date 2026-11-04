@@ -14,7 +14,7 @@ public class FileAsyncAction {
     public static void startAutoSaveFurnaces(FurnaceAdvanced plugin, FurnaceStorage furnaceStorage, FurnaceManagement furnaceManagement) {
         long period = 20L * 60 * 3;
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            List<FurnaceInformation> snapshot = furnaceManagement.snapshot();
+            List<FurnaceInformation> snapshot = furnaceManagement.getList();
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
                     furnaceStorage.save(snapshot);

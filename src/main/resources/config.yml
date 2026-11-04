@@ -23,6 +23,21 @@ furnace-already-max-level: "&eThis upgrade has already been maximum level"
 not-enough-money-upgrade: "&4You don't have enough money to upgrade this machine"
 
 #
+#   Configuring the item lines when you get the furnace item into your slot inventory
+#
+item-inventory:
+  display-name: "&d&l[&b&lFurnaceAdvanced&d&l]&f&l Furnace Technology"
+  line: # Show the furnace information in your furnace item inventory. Do not remove the couple %...% or change format, but you can adjust the position for your customize in that line (not other line)
+    # 1st line for showing author's furnace name
+    1st-line: "&7Author: &e%player_name%"
+    # 2nd line for showing the cook level of the furnace
+    2nd-line: "&7Cook Level: &c%furnace_cook_level%"
+    # 3rd line for showing the generate level of the furnace
+    3rd-line: "&7Generate Level: &c%furnace_generate_level%"
+  description:
+    - "&fPlace the furnace and&4 SNEAKING + RIGHT-CLICK&f to open upgrade menu"
+
+#
 #   Configuring the message on hologram. Caution: there are 4 lines, do not remove or change the structure
 #
 
@@ -58,7 +73,7 @@ furnace-upgrade-menu:
       generate-exactly: "&eLevel &c%furnace_generate_level%&e:&a Exactly &c%furnace_generate_amount% &aamounts"
       generate-range: "&eLevel &c%furnace_generate_level%&e:&a Range &c%furnace_generate_amount_min% &ato &c%furnace_generate_amount_max% &aamounts"
     cost-info:
-      info: "&7Cost: &4&l&u%furnace_generate_cost%&7. To upgrade the level &c&l%furnace_generate_next_level%"
+      info: "&7Cost: &4&l%furnace_generate_cost%&7. To upgrade the level &c&l%furnace_generate_next_level%"
       already-max: "&aYou have already upgraded this type to max level"
   open-furnace-inventory:
     name: "&eOpen Furnace Inventory"
@@ -72,7 +87,7 @@ furnace-upgrade-menu:
       - "&fMake the furnace cook faster than normal"
     level-info: "&eLevel &c%furnace_cook_level%&e: &c%furnace_cook_time%&e seconds"
     cost-info:
-      info: "&7Cost: &4&l&u%furnace_cook_cost%&7. To upgrade the level &4&l%furnace_cook_next_level%"
+      info: "&7Cost: &4&l%furnace_cook_cost%&7. To upgrade the level &4&l%furnace_cook_next_level%"
       already-max: "&aYou have already upgraded this type to max level"
   close:
     name: "&4Close Menu"

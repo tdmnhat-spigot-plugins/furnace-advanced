@@ -9,20 +9,16 @@ import dev.tdmnhat.plugin.spigot.entity.FurnaceInformation;
 import dev.tdmnhat.plugin.spigot.event.FurnaceSmeltDoneEvent;
 import dev.tdmnhat.plugin.spigot.util.file.GettingDataConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Furnace;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class FurnaceCookListener implements Listener {
@@ -42,8 +38,7 @@ public class FurnaceCookListener implements Listener {
         if(furnaceInformation == null) {
             return;
         }
-        updateCookTime(furnace, furnaceInformation);
-
+        updateCookTime(event.getBlock().getLocation(), furnaceInformation);
         new FurnaceCookingProgress(plugin).addTask(furnace, furnaceInformation);
     }
 
@@ -64,10 +59,13 @@ public class FurnaceCookListener implements Listener {
                 .orElse(null);
 
         if (generateLevelDto != null) {
+            ItemStack itemStack = event.getResult();
             if (generateLevelDto.getMin() == generateLevelDto.getMax()) {
-                event.getResult().setAmount(generateLevelDto.getMin());
+                itemStack.setAmount(generateLevelDto.getMin());
+                event.setResult(itemStack);
             } else {
-                event.getResult().setAmount(new Random().nextInt(generateLevelDto.getMin(), generateLevelDto.getMax() + 1));
+                itemStack.setAmount(new Random().nextInt(generateLevelDto.getMin(), generateLevelDto.getMax() + 1));
+                event.setResult(itemStack);
             }
         }
 
@@ -82,7 +80,7 @@ public class FurnaceCookListener implements Listener {
             return;
         }
 
-        updateCookTime(furnace, furnaceInformation);
+        updateCookTime(event.getFurnace().getLocation(), furnaceInformation);
         new FurnaceCookingProgress(plugin).addTask(furnace, furnaceInformation);
     }
 
@@ -91,18 +89,24 @@ public class FurnaceCookListener implements Listener {
         Furnace furnace = (Furnace) event.getBlock().getState();
         if(furnace.getCookTime() == 0) {
             FurnaceInformation furnaceInformation = furnaceManagement.getFurnaceInformation(furnace.getLocation());
-            updateCookTime(furnace, furnaceInformation);
+            updateCookTime(event.getBlock().getLocation(), furnaceInformation);
             new FurnaceCookingProgress(plugin).addTask(furnace, furnaceInformation);
         }
     }
 
-    private void updateCookTime(Furnace furnace, FurnaceInformation furnaceInformation) {
+    private void updateCookTime(Location location, FurnaceInformation furnaceInformation) {
         List<CookLevelDto> cookLevelDtos = new GettingDataConfig(plugin).getListCookTime();
         short cookTime = Short.parseShort(200 - (cookLevelDtos.stream()
                 .filter(item -> item.getLevel() == furnaceInformation.getCookTimeLevel())
                 .findFirst()
                 .orElse(cookLevelDtos.getFirst())
                 .getCookTime() * 20) + "");
-        furnace.setCookTime(cookTime);
+
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if(location.getBlock().getState() instanceof Furnace fresh) {
+                fresh.setCookTime(cookTime);
+                fresh.update();
+            }
+        });
     }
 }
